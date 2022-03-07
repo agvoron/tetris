@@ -1,5 +1,4 @@
 # === Tasks ===
-* Start with moving between screens
 * Data structure for the board
 * Draw the board
 * Create tetrominoes and display them

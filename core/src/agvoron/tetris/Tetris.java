@@ -7,12 +7,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import agvoron.tetris.ui.TitleScreen;
 
 public class Tetris extends Game {
-    /** use to create UI elements */
+    /** Use only to switch screens */
+    static public Tetris app;
+
+    /** Use to create UI elements */
     static public Skin ui_skin;
 
     @Override
     public void create() {
         // TODO loading bar here - use Asset Manager?
+        app = this;
         ui_skin = new Skin(Gdx.files.internal("plain-james/plain-james-ui.json"));
         this.setScreen(new TitleScreen());
     }
