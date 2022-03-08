@@ -14,7 +14,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import agvoron.tetris.Tetris;
 import agvoron.tetris.game.Board;
 import agvoron.tetris.game.Tetromino;
-import agvoron.tetris.game.Tetromino.Shape;
 
 public class TetrisScreen implements Screen {
 
@@ -36,6 +35,8 @@ public class TetrisScreen implements Screen {
     private Tetromino currPiece;
     private int currRootX;
     private int currRootY;
+    private float gravity;
+    private float gravityTimer;
 
     public TetrisScreen() {
         stage = new Stage(new ScreenViewport());
@@ -68,9 +69,12 @@ public class TetrisScreen implements Screen {
         stage.addActor(welcome);
 
         // for test only
-        currPiece = new Tetromino(Shape.I);
-        currRootX = board.getWidth() / 2 - 2;
-        currRootY = board.getHeight() - 1;
+        currPiece = Tetromino.createRandomPiece();
+        currRootX = board.getWidth() / 2 - 1;
+        currRootY = board.getHeight();
+
+        gravity = 0.33f;
+        gravityTimer = -3f;
     }
 
     @Override
@@ -120,6 +124,16 @@ public class TetrisScreen implements Screen {
         // draw UI
         stage.act();
         stage.draw();
+
+        gravityTimer += delta;
+        if (gravityTimer > gravity) {
+            gravityTimer = 0;
+            currRootY -= 1;
+            if (currRootY == 0) {
+                currPiece = Tetromino.createRandomPiece();
+                currRootY = board.getHeight();
+            }
+        }
     }
 
     @Override

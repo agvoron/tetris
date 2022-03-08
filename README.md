@@ -18,7 +18,7 @@ I'd like to learn a bit more LibGDX as I go.
     * Looks nice
 * Game graphics/UI
     * ~See the tetris board~
-    * See pieces as they fall
+    * ~See pieces as they fall~
     * See placed pieces
     * Show score
     * See upcoming pieces

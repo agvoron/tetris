@@ -1,7 +1,8 @@
 # === Tasks ===
-* Create tetrominoes and display them
-* Get them moving left/right/down
-* 
+* Pieces fall and place
+* Hard and soft drop
+* Translating pieces
+* Rotating pieces
 
 
 # === Implementation Notes ===
