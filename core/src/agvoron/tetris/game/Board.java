@@ -9,8 +9,6 @@ public class Board {
     private static final int BOARD_HEIGHT = 20;
 
     private Array<Array<Square>> board;
-    private int width;
-    private int height;
 
     public Board() {
         this(BOARD_WIDTH, BOARD_HEIGHT);
@@ -26,9 +24,6 @@ public class Board {
             board.get(i).shrink();
         }
         board.shrink();
-
-        this.width = width;
-        this.height = height;
     }
 
     public Array<Array<Square>> getGrid() {
@@ -36,11 +31,19 @@ public class Board {
     }
 
     public int getWidth() {
-        return width;
+        return board.size;
     }
 
     public int getHeight() {
-        return height;
+        return board.get(0).size;
+    }
+
+    public Square getSquare(int x, int y) {
+        return board.get(x).get(y);
+    }
+
+    public void setSquare(int x, int y, Square square) {
+        board.get(x).set(y, square);
     }
 
 }
