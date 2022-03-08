@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import agvoron.tetris.Tetris;
 import agvoron.tetris.game.Board;
+import agvoron.tetris.game.Tetromino;
+import agvoron.tetris.game.Tetromino.Shape;
 
 public class TetrisScreen implements Screen {
 
@@ -30,6 +32,10 @@ public class TetrisScreen implements Screen {
     private float endX;
     private float startY;
     private float endY;
+
+    private Tetromino currPiece;
+    private int currRootX;
+    private int currRootY;
 
     public TetrisScreen() {
         stage = new Stage(new ScreenViewport());
@@ -60,6 +66,11 @@ public class TetrisScreen implements Screen {
 
         Label welcome = new Label("Welcome!", Tetris.ui_skin);
         stage.addActor(welcome);
+
+        // for test only
+        currPiece = new Tetromino(Shape.I);
+        currRootX = board.getWidth() / 2 - 2;
+        currRootY = board.getHeight() - 1;
     }
 
     @Override
@@ -84,6 +95,14 @@ public class TetrisScreen implements Screen {
                 renderer.setColor(board.getSquare(i, j).color);
                 renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
             }
+        }
+        // draw tetromino
+        int[] tetromino = currPiece.getCoordinates(currRootX, currRootY);
+        renderer.setColor(currPiece.getColor());
+        for (int i = 0; i < tetromino.length; i += 2) {
+            float loopX = startX + tileSize * tetromino[i];
+            float loopY = startY + tileSize * tetromino[i + 1];
+            renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
         }
         // draw board lines TODO top left pixel is missing...!?
         renderer.setColor(0, 0, 0, .8f);
