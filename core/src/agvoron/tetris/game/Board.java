@@ -5,6 +5,8 @@ import com.badlogic.gdx.utils.Array;
 public class Board {
 
     private Array<Array<Square>> board;
+    private int width;
+    private int height;
 
     public Board() {
         this(10, 20);
@@ -20,6 +22,21 @@ public class Board {
             board.get(i).shrink();
         }
         board.shrink();
+
+        this.width = width;
+        this.height = height;
+    }
+
+    public Array<Array<Square>> getGrid() {
+        return board;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
 }
