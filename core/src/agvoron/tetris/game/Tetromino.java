@@ -1,12 +1,32 @@
 package agvoron.tetris.game;
 
+import com.badlogic.gdx.graphics.Color;
+
 public class Tetromino {
 
     public Shape shape;
     public Rotation rotation;
 
+    private static final Color LIGHT_BLUE = new Color(0.3f, 1f, 1f, 1f);
+    private static final Color YELLOW = new Color(1f, 0.9f, 0.25f, 1f);
+    private static final Color PURPLE = new Color(1f, 0.2f, 0.9f, 1f);
+    private static final Color BLUE = new Color(0.2f, 0.2f, 1f, 1f);
+    private static final Color ORANGE = new Color(1f, 0.6f, 0.2f, 1f);
+    private static final Color GREEN = new Color(0.2f, 0.8f, 0.15f, 1f);
+    private static final Color RED = new Color(0.9f, 0.15f, 0.15f, 1f);
+
     public enum Shape {
-        I, O, T, J, L, S, Z
+        I(LIGHT_BLUE), O(YELLOW), T(PURPLE), J(BLUE), L(ORANGE), S(GREEN), Z(RED);
+
+        private final Color shapeColor;
+
+        private Shape(Color shapeColor) {
+            this.shapeColor = shapeColor;
+        }
+
+        public Color getColor() {
+            return shapeColor;
+        }
     }
 
     public enum Rotation {
@@ -38,6 +58,10 @@ public class Tetromino {
     public Tetromino(Shape shape) {
         this.shape = shape;
         rotation = Rotation.N;
+    }
+
+    public Color getColor() {
+        return shape.getColor();
     }
 
     // root points to bottom left corner of shape

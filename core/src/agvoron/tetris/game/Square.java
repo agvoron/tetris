@@ -7,7 +7,7 @@ public class Square {
     public Color color;
 
     public Square() {
-        color = new Color(0.75f, 0.75f, 0.75f, 1);
+        color = new Color(0.75f, 0.75f, 0.75f, 1f);
     }
 
 }
