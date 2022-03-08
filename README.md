@@ -8,13 +8,16 @@ I'd like to learn a bit more LibGDX as I go.
 * Title Screen
     * See how-to-play instructions
     * Settings button
-    * Play button
+    * ~Play button~
+    * Looks nice
 * Settings Screen
     * Configure key binds
     * Configure graphics
+    * Configure sound
     * Settings are persisted
+    * Looks nice
 * Game graphics/UI
-    * See the tetris board
+    * ~See the tetris board~
     * See pieces as they fall
     * See placed pieces
     * Show score
@@ -24,6 +27,7 @@ I'd like to learn a bit more LibGDX as I go.
         * Placing
         * Clearing
         * In danger
+    * Looks nice
 * Gameplay
     * Random pieces appear and fall
     * Translating
