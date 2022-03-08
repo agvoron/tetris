@@ -1,6 +1,7 @@
 package agvoron.tetris.game;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 
 public class Tetromino {
 
@@ -68,12 +69,13 @@ public class Tetromino {
     public int[] getCoordinates(int rootX, int rootY) {
         switch (shape) {
             case I:
-                return new int[] { rootX, rootY, rootX + 1, rootY, rootX + 2, rootY, rootX + 3, rootY };
+                return coordsI(rootX, rootY);
             case J:
-                return new int[] { rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1, rootX + 2, rootY };
+                return coordsJ(rootX, rootY);
             case L:
                 return new int[] { rootX, rootY, rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
             case O:
+                // no rotation
                 return new int[] { rootX, rootY, rootX + 1, rootY, rootX, rootY + 1, rootX + 1, rootY + 1 };
             case S:
                 return new int[] { rootX, rootY, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
@@ -86,12 +88,50 @@ public class Tetromino {
         }
     }
 
+    // rotation info for I
+    private int[] coordsI(int rootX, int rootY) {
+        switch (rotation) {
+            case N:
+                return new int[] { rootX, rootY, rootX + 1, rootY, rootX + 2, rootY, rootX + 3, rootY };
+            case E:
+                return new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 1, rootY + 2, rootX + 1, rootY + 3 };
+            case S:
+                // duplicate N
+                return new int[] { rootX, rootY, rootX + 1, rootY, rootX + 2, rootY, rootX + 3, rootY };
+            case W:
+                // duplicate E
+                return new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 1, rootY + 2, rootX + 1, rootY + 3 };
+            default:
+                return null;
+        }
+    }
+
+    // rotation info for J
+    private int[] coordsJ(int rootX, int rootY) {
+        switch (rotation) {
+            case N:
+                return new int[] { rootX, rootY, rootX, rootY - 1, rootX, rootY + 1, rootX - 1, rootY - 1 };
+            case E:
+                return new int[] { rootX, rootY + 1, rootX, rootY, rootX + 1, rootY, rootX + 2, rootY };
+            case S:
+                return new int[] { rootX, rootY, rootX, rootY - 1, rootX, rootY + 1, rootX + 1, rootY + 1 };
+            case W:
+                return new int[] { rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1, rootX + 2, rootY };
+            default:
+                return null;
+        }
+    }
+
     public void rotateRight() {
         rotation = rotation.right();
     }
 
     public void rotateLeft() {
         rotation = rotation.left();
+    }
+
+    public static Tetromino createRandomPiece() {
+        return new Tetromino(Shape.values()[MathUtils.random(Shape.values().length - 1)]);
     }
 
 }
