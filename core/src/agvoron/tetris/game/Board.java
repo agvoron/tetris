@@ -4,12 +4,16 @@ import com.badlogic.gdx.utils.Array;
 
 public class Board {
 
+    // default dimensions in number of tiles
+    private static final int BOARD_WIDTH = 10;
+    private static final int BOARD_HEIGHT = 20;
+
     private Array<Array<Square>> board;
     private int width;
     private int height;
 
     public Board() {
-        this(10, 20);
+        this(BOARD_WIDTH, BOARD_HEIGHT);
     }
 
     public Board(int width, int height) {

@@ -15,7 +15,8 @@ import agvoron.tetris.game.Board;
 
 public class TetrisScreen implements Screen {
 
-    private static final float BOARD_PADDING = 50;
+    private static final float HOR_BOARD_PAD = 200;
+    private static final float VER_BOARD_PAD = 50;
 
     private Stage stage;
     private OrthographicCamera stageCam;
@@ -36,14 +37,15 @@ public class TetrisScreen implements Screen {
         stageCam.setToOrtho(false);
 
         board = new Board();
-        float tileSizeW = (Gdx.graphics.getWidth() - (2 * BOARD_PADDING)) / board.getWidth();
-        float tileSizeH = (Gdx.graphics.getHeight() - (2 * BOARD_PADDING)) / board.getHeight();
+        // TODO if board too small, these go negative, fix that
+        float tileSizeW = (Gdx.graphics.getWidth() - (2 * HOR_BOARD_PAD)) / board.getWidth();
+        float tileSizeH = (Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / board.getHeight();
         tileSize = Math.min(tileSizeW, tileSizeH);
 
         if (tileSize == tileSizeW) {
             // constrained by width
-            startX = BOARD_PADDING;
-            endX = Gdx.graphics.getWidth() - BOARD_PADDING;
+            startX = HOR_BOARD_PAD;
+            endX = Gdx.graphics.getWidth() - HOR_BOARD_PAD;
             startY = (Gdx.graphics.getHeight() / 2) - (board.getHeight() / 2 * tileSize);
             endY = (Gdx.graphics.getHeight() / 2) + (board.getHeight() / 2 * tileSize);
 
@@ -51,8 +53,8 @@ public class TetrisScreen implements Screen {
             // constrained by height
             startX = (Gdx.graphics.getWidth() / 2) - (board.getWidth() / 2 * tileSize);
             endX = (Gdx.graphics.getWidth() / 2) + (board.getWidth() / 2 * tileSize);
-            startY = BOARD_PADDING;
-            endY = Gdx.graphics.getHeight() - BOARD_PADDING;
+            startY = VER_BOARD_PAD;
+            endY = Gdx.graphics.getHeight() - VER_BOARD_PAD;
         }
 
         Label welcome = new Label("Welcome!", Tetris.ui_skin);
