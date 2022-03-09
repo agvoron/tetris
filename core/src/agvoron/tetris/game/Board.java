@@ -42,4 +42,26 @@ public class Board {
         return board.get(y).get(x);
     }
 
+    public int clearLines() {
+        int linesCleared = 0;
+        for (int i = board.size - 1; i >= 0; i--) {
+            boolean lineClear = true;
+            for (int j = 0; j < board.get(i).size; j++) {
+                if (!board.get(i).get(j).occupied) {
+                    lineClear = false;
+                    break;
+                }
+            }
+            if (lineClear) {
+                board.removeIndex(i);
+                board.add(new Array<Square>());
+                for (int j = 0; j < board.get(0).size; j++) {
+                    board.get(board.size - 1).add(new Square());
+                }
+                linesCleared += 1;
+            }
+        }
+        return linesCleared;
+    }
+
 }

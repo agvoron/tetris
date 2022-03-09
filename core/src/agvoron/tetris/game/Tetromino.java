@@ -164,6 +164,7 @@ public class Tetromino {
                 editSquare.color = getColor();
                 editSquare.occupied = true;
             }
+            board.clearLines();
             reset();
             refreshCoordinates();
             return true;
