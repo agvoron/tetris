@@ -19,7 +19,7 @@ I'd like to learn a bit more LibGDX as I go.
 * Game graphics/UI
     * ~See the tetris board~
     * ~See pieces as they fall~
-    * See placed pieces
+    * ~See placed pieces~
     * Show score
     * See upcoming pieces
     * See held piece
@@ -29,7 +29,7 @@ I'd like to learn a bit more LibGDX as I go.
         * In danger
     * Looks nice
 * Gameplay
-    * Random pieces appear and fall
+    * ~Random pieces appear and fall~
     * Translating
     * Rotating
     * Flipping
