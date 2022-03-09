@@ -12,6 +12,7 @@ I'd like to learn a bit more LibGDX as I go.
     * Looks nice
 * Settings Screen
     * Configure key binds
+    * Configure handling (basic)
     * Configure graphics
     * Configure sound
     * Settings are persisted
@@ -30,16 +31,17 @@ I'd like to learn a bit more LibGDX as I go.
     * Looks nice
 * Gameplay
     * ~Random pieces appear and fall~
-    * Translating
+    * ~Translating~
     * Rotating
     * Flipping
-    * Dropping slow
-    * Dropping fast
+    * ~Dropping slow~
+    * ~Dropping fast~
     * Clearing lines
     * Give score
     * Level up and increase gravity
     * Topping out and losing
     * Hold a piece
+    * Keys repeat if held
 * Sound effects
     * Play music
     * Place
