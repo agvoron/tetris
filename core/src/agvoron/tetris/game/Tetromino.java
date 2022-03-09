@@ -198,26 +198,24 @@ public class Tetromino {
                 coordsJ();
                 break;
             case L:
-                tetromino = new int[] { rootX, rootY, rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
+                coordsL();
                 break;
             case O:
                 // no rotation
                 tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX, rootY + 1, rootX + 1, rootY + 1 };
                 break;
-            case S:
-                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
-                break;
             case T:
-                tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2,
-                        rootY + 1 };
+                coordsT();
+                break;
+            case S:
+                coordsS();
                 break;
             case Z:
-                tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY };
+                coordsZ();
                 break;
         }
     }
 
-    // rotation info for I
     private void coordsI() {
         switch (rotation) {
             case N:
@@ -239,21 +237,93 @@ public class Tetromino {
         }
     }
 
-    // rotation info for J
     private void coordsJ() {
         switch (rotation) {
             case N:
-                tetromino = new int[] { rootX, rootY, rootX, rootY - 1, rootX, rootY + 1, rootX - 1, rootY - 1 };
+                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 1, rootY + 2 };
                 break;
             case E:
-                tetromino = new int[] { rootX, rootY + 1, rootX, rootY, rootX + 1, rootY, rootX + 2, rootY };
+                tetromino = new int[] { rootX, rootY + 1, rootX, rootY + 2, rootX + 1, rootY + 1, rootX + 2,
+                        rootY + 1 };
                 break;
             case S:
-                tetromino = new int[] { rootX, rootY, rootX, rootY - 1, rootX, rootY + 1, rootX + 1, rootY + 1 };
+                tetromino = new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 1, rootY + 2, rootX + 2,
+                        rootY + 2 };
                 break;
             case W:
                 tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1, rootX + 2,
                         rootY };
+                break;
+        }
+    }
+
+    private void coordsL() {
+        switch (rotation) {
+            case N:
+                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX, rootY + 1, rootX, rootY + 2 };
+                break;
+            case E:
+                tetromino = new int[] { rootX - 1, rootY, rootX - 1, rootY + 1, rootX, rootY + 1, rootX + 1,
+                        rootY + 1 };
+                break;
+            case S:
+                tetromino = new int[] { rootX, rootY, rootX, rootY + 1, rootX, rootY + 2, rootX - 1, rootY + 2 };
+                break;
+            case W:
+                tetromino = new int[] { rootX - 1, rootY + 1, rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 1,
+                        rootY + 2 };
+                break;
+        }
+    }
+
+    private void coordsT() {
+        switch (rotation) {
+            case N:
+                tetromino = new int[] { rootX, rootY, rootX, rootY + 1, rootX + 1, rootY + 1, rootX, rootY + 2 };
+                break;
+            case E:
+                tetromino = new int[] { rootX, rootY, rootX, rootY + 1, rootX + 1, rootY + 1, rootX - 1, rootY + 1 };
+                break;
+            case S:
+                tetromino = new int[] { rootX, rootY, rootX, rootY + 1, rootX - 1, rootY + 1, rootX, rootY + 2 };
+                break;
+            case W:
+                tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY + 1, rootX - 1, rootY + 1, rootX,
+                        rootY + 2 };
+                break;
+        }
+    }
+
+    private void coordsS() {
+        switch (rotation) {
+            case N:
+                tetromino = new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX, rootY + 1, rootX, rootY + 2 };
+                break;
+            case E:
+                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
+                break;
+            case S:
+                tetromino = new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX, rootY + 1, rootX, rootY + 2 };
+                break;
+            case W:
+                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
+                break;
+        }
+    }
+
+    private void coordsZ() {
+        switch (rotation) {
+            case N:
+                tetromino = new int[] { rootX, rootY, rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 1, rootY + 2 };
+                break;
+            case E:
+                tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 1, rootY, rootX + 2, rootY };
+                break;
+            case S:
+                tetromino = new int[] { rootX, rootY, rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 1, rootY + 2 };
+                break;
+            case W:
+                tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 1, rootY, rootX + 2, rootY };
                 break;
         }
     }
