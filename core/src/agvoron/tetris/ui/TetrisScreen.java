@@ -87,10 +87,11 @@ public class TetrisScreen implements Screen {
                 Gdx.app.log("Key", Input.Keys.toString(keycode));
                 switch (keycode) {
                     case Input.Keys.SPACE:
-                        currPiece.fall();
+                        while (!currPiece.fall()) {
+                        }
                         break;
                     case Input.Keys.DOWN:
-                        currPiece.fall();
+                        gravity /= 4f;
                         break;
                     case Input.Keys.RIGHT:
                         currPiece.translateRight();
@@ -111,6 +112,16 @@ public class TetrisScreen implements Screen {
                         break;
                 }
                 return super.keyDown(event, keycode);
+            }
+
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                switch (keycode) {
+                    case Input.Keys.DOWN:
+                        gravity *= 4f;
+                        break;
+                }
+                return super.keyUp(event, keycode);
             }
 
         });

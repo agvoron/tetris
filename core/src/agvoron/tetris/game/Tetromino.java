@@ -152,7 +152,7 @@ public class Tetromino {
         return false;
     }
 
-    public void fall() {
+    public boolean fall() {
         rootY -= 1;
         refreshCoordinates();
         if (testForHit()) {
@@ -166,7 +166,9 @@ public class Tetromino {
             }
             reset();
             refreshCoordinates();
+            return true;
         }
+        return false;
     }
 
     private boolean testForHit() {
