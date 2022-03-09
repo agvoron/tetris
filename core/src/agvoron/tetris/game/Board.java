@@ -42,8 +42,4 @@ public class Board {
         return board.get(x).get(y);
     }
 
-    public void setSquare(int x, int y, Square square) {
-        board.get(x).set(y, square);
-    }
-
 }

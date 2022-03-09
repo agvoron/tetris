@@ -33,8 +33,6 @@ public class TetrisScreen implements Screen {
     private float endY;
 
     private Tetromino currPiece;
-    private int currRootX;
-    private int currRootY;
     private float gravity;
     private float gravityTimer;
 
@@ -68,13 +66,9 @@ public class TetrisScreen implements Screen {
         Label welcome = new Label("Welcome!", Tetris.ui_skin);
         stage.addActor(welcome);
 
-        // for test only
-        currPiece = Tetromino.createRandomPiece();
-        currRootX = board.getWidth() / 2 - 1;
-        currRootY = board.getHeight();
-
+        currPiece = new Tetromino(board);
         gravity = 0.33f;
-        gravityTimer = -3f;
+        gravityTimer = 0f;
     }
 
     @Override
@@ -101,7 +95,7 @@ public class TetrisScreen implements Screen {
             }
         }
         // draw tetromino
-        int[] tetromino = currPiece.getCoordinates(currRootX, currRootY);
+        int[] tetromino = currPiece.getTetromino();
         renderer.setColor(currPiece.getColor());
         for (int i = 0; i < tetromino.length; i += 2) {
             float loopX = startX + tileSize * tetromino[i];
@@ -125,14 +119,11 @@ public class TetrisScreen implements Screen {
         stage.act();
         stage.draw();
 
+        // game loop update
         gravityTimer += delta;
         if (gravityTimer > gravity) {
             gravityTimer = 0;
-            currRootY -= 1;
-            if (currRootY == 0) {
-                currPiece = Tetromino.createRandomPiece();
-                currRootY = board.getHeight();
-            }
+            currPiece.fall();
         }
     }
 

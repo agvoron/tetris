@@ -5,8 +5,16 @@ import com.badlogic.gdx.math.MathUtils;
 
 public class Tetromino {
 
-    public Shape shape;
-    public Rotation rotation;
+    private Board board;
+
+    private Shape shape;
+    private Rotation rotation;
+
+    // root points to bottom left corner of shape
+    private int rootX;
+    private int rootY;
+    // board coordinates of each square
+    private int[] tetromino;
 
     private static final Color LIGHT_BLUE = new Color(0.3f, 1f, 1f, 1f);
     private static final Color YELLOW = new Color(1f, 0.9f, 0.25f, 1f);
@@ -16,8 +24,14 @@ public class Tetromino {
     private static final Color GREEN = new Color(0.2f, 0.8f, 0.15f, 1f);
     private static final Color RED = new Color(0.9f, 0.15f, 0.15f, 1f);
 
-    public enum Shape {
-        I(LIGHT_BLUE), O(YELLOW), T(PURPLE), J(BLUE), L(ORANGE), S(GREEN), Z(RED);
+    private enum Shape {
+        I(LIGHT_BLUE) {
+            @Override
+            public int getStartingX(int boardWidth) {
+                return boardWidth / 2 - 2;
+            };
+        },
+        O(YELLOW), T(PURPLE), J(BLUE), L(ORANGE), S(GREEN), Z(RED);
 
         private final Color shapeColor;
 
@@ -28,9 +42,13 @@ public class Tetromino {
         public Color getColor() {
             return shapeColor;
         }
+
+        public int getStartingX(int boardWidth) {
+            return boardWidth / 2 - 1;
+        }
     }
 
-    public enum Rotation {
+    private enum Rotation {
         N {
             @Override
             public Rotation left() {
@@ -56,82 +74,151 @@ public class Tetromino {
         }
     }
 
-    public Tetromino(Shape shape) {
-        this.shape = shape;
+    public Tetromino(Board board) {
+        this.board = board;
+        reset();
+        refreshCoordinates();
+    }
+
+    private void reset() {
+        shape = Shape.values()[MathUtils.random(Shape.values().length - 1)];
         rotation = Rotation.N;
+        rootX = shape.getStartingX(board.getWidth());
+        rootY = board.getHeight();
     }
 
     public Color getColor() {
         return shape.getColor();
     }
 
-    // root points to bottom left corner of shape
-    public int[] getCoordinates(int rootX, int rootY) {
+    public int[] getTetromino() {
+        return tetromino;
+    }
+
+    public boolean rotateRight() {
+        rotation = rotation.right();
+        refreshCoordinates();
+        if (testForHit()) {
+            rotation = rotation.left();
+            refreshCoordinates();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean rotateLeft() {
+        rotation = rotation.left();
+        refreshCoordinates();
+        if (testForHit()) {
+            rotation = rotation.right();
+            refreshCoordinates();
+            return true;
+        }
+        return false;
+    }
+
+    public void fall() {
+        rootY -= 1;
+        refreshCoordinates();
+        if (testForHit()) {
+            // we have landed
+            rootY += 1;
+            refreshCoordinates();
+            for (int i = 0; i < tetromino.length; i += 2) {
+                Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
+                editSquare.color = getColor();
+                editSquare.occupied = true;
+            }
+            reset();
+            refreshCoordinates();
+        }
+    }
+
+    private boolean testForHit() {
+        for (int i = 0; i < tetromino.length; i += 2) {
+            int x = tetromino[i];
+            int y = tetromino[i + 1];
+            if (x < 0 || y < 0 || x >= board.getWidth()) {
+                return true;
+            }
+            if (y >= board.getHeight()) {
+                continue; // it's OK to be above the board
+            }
+            Square square = board.getSquare(x, y);
+            if (square.occupied) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void refreshCoordinates() {
         switch (shape) {
             case I:
-                return coordsI(rootX, rootY);
+                coordsI();
+                break;
             case J:
-                return coordsJ(rootX, rootY);
+                coordsJ();
+                break;
             case L:
-                return new int[] { rootX, rootY, rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
+                tetromino = new int[] { rootX, rootY, rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
+                break;
             case O:
                 // no rotation
-                return new int[] { rootX, rootY, rootX + 1, rootY, rootX, rootY + 1, rootX + 1, rootY + 1 };
+                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX, rootY + 1, rootX + 1, rootY + 1 };
+                break;
             case S:
-                return new int[] { rootX, rootY, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
+                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
+                break;
             case T:
-                return new int[] { rootX, rootY + 1, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY + 1 };
+                tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2,
+                        rootY + 1 };
+                break;
             case Z:
-                return new int[] { rootX, rootY + 1, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY };
-            default:
-                return null;
+                tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 2, rootY };
+                break;
         }
     }
 
     // rotation info for I
-    private int[] coordsI(int rootX, int rootY) {
+    private void coordsI() {
         switch (rotation) {
             case N:
-                return new int[] { rootX, rootY, rootX + 1, rootY, rootX + 2, rootY, rootX + 3, rootY };
+                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX + 2, rootY, rootX + 3, rootY };
+                break;
             case E:
-                return new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 1, rootY + 2, rootX + 1, rootY + 3 };
+                tetromino = new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 1, rootY + 2, rootX + 1,
+                        rootY + 3 };
+                break;
             case S:
                 // duplicate N
-                return new int[] { rootX, rootY, rootX + 1, rootY, rootX + 2, rootY, rootX + 3, rootY };
+                tetromino = new int[] { rootX, rootY, rootX + 1, rootY, rootX + 2, rootY, rootX + 3, rootY };
+                break;
             case W:
                 // duplicate E
-                return new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 1, rootY + 2, rootX + 1, rootY + 3 };
-            default:
-                return null;
+                tetromino = new int[] { rootX + 1, rootY, rootX + 1, rootY + 1, rootX + 1, rootY + 2, rootX + 1,
+                        rootY + 3 };
+                break;
         }
     }
 
     // rotation info for J
-    private int[] coordsJ(int rootX, int rootY) {
+    private void coordsJ() {
         switch (rotation) {
             case N:
-                return new int[] { rootX, rootY, rootX, rootY - 1, rootX, rootY + 1, rootX - 1, rootY - 1 };
+                tetromino = new int[] { rootX, rootY, rootX, rootY - 1, rootX, rootY + 1, rootX - 1, rootY - 1 };
+                break;
             case E:
-                return new int[] { rootX, rootY + 1, rootX, rootY, rootX + 1, rootY, rootX + 2, rootY };
+                tetromino = new int[] { rootX, rootY + 1, rootX, rootY, rootX + 1, rootY, rootX + 2, rootY };
+                break;
             case S:
-                return new int[] { rootX, rootY, rootX, rootY - 1, rootX, rootY + 1, rootX + 1, rootY + 1 };
+                tetromino = new int[] { rootX, rootY, rootX, rootY - 1, rootX, rootY + 1, rootX + 1, rootY + 1 };
+                break;
             case W:
-                return new int[] { rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1, rootX + 2, rootY };
-            default:
-                return null;
+                tetromino = new int[] { rootX, rootY + 1, rootX + 1, rootY + 1, rootX + 2, rootY + 1, rootX + 2,
+                        rootY };
+                break;
         }
-    }
-
-    public void rotateRight() {
-        rotation = rotation.right();
-    }
-
-    public void rotateLeft() {
-        rotation = rotation.left();
-    }
-
-    public static Tetromino createRandomPiece() {
-        return new Tetromino(Shape.values()[MathUtils.random(Shape.values().length - 1)]);
     }
 
 }
