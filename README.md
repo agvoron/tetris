@@ -28,7 +28,9 @@ I'd like to learn a bit more LibGDX as I go.
         * Placing
         * Clearing
         * In danger
+        * Combo
     * Looks nice
+    * Ghost piece
 * Gameplay
     * ~Random pieces appear and fall~
     * ~Translating~
@@ -36,16 +38,19 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Flipping~
     * ~Dropping slow~
     * ~Dropping fast~
-    * Clearing lines
+    * ~Clearing lines~
     * Give score
     * Level up and increase gravity
     * Topping out and losing
     * Hold a piece
     * Keys repeat if held
+    * Rotations will move the piece aside if needed
+    * Moving can delay landing (e.g. for T-spin)
 * Sound effects
     * Play music
     * Place
     * Clear
+        * Special clears
     * Rotate
         * Special rotations
     * Danger
