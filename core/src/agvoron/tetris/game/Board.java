@@ -16,9 +16,9 @@ public class Board {
 
     public Board(int width, int height) {
         board = new Array<Array<Square>>();
-        for (int i = 0; i < width; i++) {
+        for (int i = 0; i < height; i++) {
             board.add(new Array<Square>());
-            for (int j = 0; j < height; j++) {
+            for (int j = 0; j < width; j++) {
                 board.get(i).add(new Square());
             }
             board.get(i).shrink();
@@ -31,15 +31,15 @@ public class Board {
     }
 
     public int getWidth() {
-        return board.size;
-    }
-
-    public int getHeight() {
         return board.get(0).size;
     }
 
+    public int getHeight() {
+        return board.size;
+    }
+
     public Square getSquare(int x, int y) {
-        return board.get(x).get(y);
+        return board.get(y).get(x);
     }
 
 }

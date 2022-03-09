@@ -32,8 +32,8 @@ I'd like to learn a bit more LibGDX as I go.
 * Gameplay
     * ~Random pieces appear and fall~
     * ~Translating~
-    * Rotating
-    * Flipping
+    * ~Rotating~
+    * ~Flipping~
     * ~Dropping slow~
     * ~Dropping fast~
     * Clearing lines
