@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import agvoron.tetris.Tetris;
 import agvoron.tetris.game.Board;
+import agvoron.tetris.game.Score;
 import agvoron.tetris.game.Tetromino;
 
 public class TetrisScreen implements Screen {
@@ -29,6 +30,8 @@ public class TetrisScreen implements Screen {
     private ShapeRenderer renderer; // TODO consider using Shape Drawer from LibGDX community
     private FPSLogger fps;
 
+    private Label scoreText;
+
     private Board board;
 
     private float tileSize;
@@ -40,6 +43,7 @@ public class TetrisScreen implements Screen {
     private Tetromino currPiece;
     private float gravity;
     private float gravityTimer;
+    private boolean softDropActive;
 
     public TetrisScreen() {
         stage = new Stage(new ScreenViewport());
@@ -69,14 +73,15 @@ public class TetrisScreen implements Screen {
             endY = Gdx.graphics.getHeight() - VER_BOARD_PAD;
         }
 
-        Label welcome = new Label("Welcome!", Tetris.ui_skin);
-        stage.addActor(welcome);
+        scoreText = new Label("Score: 0", Tetris.ui_skin);
+        stage.addActor(scoreText);
 
         setupKeyControls();
 
         currPiece = new Tetromino(board);
         gravity = 0.5f;
         gravityTimer = 1f;
+        Score.reset();
     }
 
     /**
@@ -90,11 +95,14 @@ public class TetrisScreen implements Screen {
 //                Gdx.app.log("Key", Input.Keys.toString(keycode));
                 switch (keycode) {
                     case Input.Keys.SPACE:
+                        int fallDistance = 0;
                         while (!currPiece.fall()) {
+                            fallDistance++;
                         }
+                        Score.hardDrop(fallDistance);
                         break;
                     case Input.Keys.DOWN:
-                        gravity /= 4f;
+                        softDropActive = true;
                         break;
                     case Input.Keys.RIGHT:
                         currPiece.translateRight();
@@ -121,7 +129,7 @@ public class TetrisScreen implements Screen {
             public boolean keyUp(InputEvent event, int keycode) {
                 switch (keycode) {
                     case Input.Keys.DOWN:
-                        gravity *= 4f;
+                        softDropActive = false;
                         break;
                 }
                 return super.keyUp(event, keycode);
@@ -179,11 +187,16 @@ public class TetrisScreen implements Screen {
         stage.draw();
 
         // game loop update
-        gravityTimer += delta;
+        gravityTimer += (softDropActive ? delta * 4 : delta);
         if (gravityTimer > gravity) {
             gravityTimer = 0;
             currPiece.fall();
+            if (softDropActive) {
+                Score.trickleSoftDrop();
+            }
         }
+
+        scoreText.setText("Score: " + Score.getScore());
 
         fps.log();
     }

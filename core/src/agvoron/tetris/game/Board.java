@@ -61,6 +61,14 @@ public class Board {
                 linesCleared += 1;
             }
         }
+
+        if (linesCleared > 0) {
+            Score.addCombo();
+            Score.clearLines(linesCleared);
+        } else {
+            Score.clearCombo();
+        }
+
         return linesCleared;
     }
 
