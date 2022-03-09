@@ -1,11 +1,14 @@
 package agvoron.tetris.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -66,9 +69,51 @@ public class TetrisScreen implements Screen {
         Label welcome = new Label("Welcome!", Tetris.ui_skin);
         stage.addActor(welcome);
 
+        setupKeyControls();
+
         currPiece = new Tetromino(board);
-        gravity = 0.33f;
-        gravityTimer = 0f;
+        gravity = 0.5f;
+        gravityTimer = 1f;
+    }
+
+    /**
+     * Setup input handlers for keys
+     */
+    private void setupKeyControls() {
+        stage.addListener(new InputListener() {
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                Gdx.app.log("Key", Input.Keys.toString(keycode));
+                switch (keycode) {
+                    case Input.Keys.SPACE:
+                        currPiece.fall();
+                        break;
+                    case Input.Keys.DOWN:
+                        currPiece.fall();
+                        break;
+                    case Input.Keys.RIGHT:
+                        currPiece.translateRight();
+                        break;
+                    case Input.Keys.LEFT:
+                        currPiece.translateLeft();
+                        break;
+                    case Input.Keys.Z:
+                        currPiece.rotateLeft();
+                        break;
+                    case Input.Keys.X:
+                        currPiece.rotateRight();
+                        break;
+                    case Input.Keys.C:
+                        break;
+                    case Input.Keys.A:
+                        currPiece.rotateFlip();
+                        break;
+                }
+                return super.keyDown(event, keycode);
+            }
+
+        });
     }
 
     @Override

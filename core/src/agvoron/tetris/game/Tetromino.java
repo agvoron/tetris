@@ -95,6 +95,28 @@ public class Tetromino {
         return tetromino;
     }
 
+    public boolean translateRight() {
+        rootX += 1;
+        refreshCoordinates();
+        if (testForHit()) {
+            rootX -= 1;
+            refreshCoordinates();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean translateLeft() {
+        rootX -= 1;
+        refreshCoordinates();
+        if (testForHit()) {
+            rootX += 1;
+            refreshCoordinates();
+            return true;
+        }
+        return false;
+    }
+
     public boolean rotateRight() {
         rotation = rotation.right();
         refreshCoordinates();
@@ -110,6 +132,19 @@ public class Tetromino {
         rotation = rotation.left();
         refreshCoordinates();
         if (testForHit()) {
+            rotation = rotation.right();
+            refreshCoordinates();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean rotateFlip() {
+        rotation = rotation.left();
+        rotation = rotation.left();
+        refreshCoordinates();
+        if (testForHit()) {
+            rotation = rotation.right();
             rotation = rotation.right();
             refreshCoordinates();
             return true;
