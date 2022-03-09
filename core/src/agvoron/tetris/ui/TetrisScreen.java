@@ -3,6 +3,7 @@ package agvoron.tetris.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -26,6 +27,7 @@ public class TetrisScreen implements Screen {
     private Stage stage;
     private OrthographicCamera stageCam;
     private ShapeRenderer renderer; // TODO consider using Shape Drawer from LibGDX community
+    private FPSLogger fps;
 
     private Board board;
 
@@ -44,6 +46,7 @@ public class TetrisScreen implements Screen {
         renderer = new ShapeRenderer();
         stageCam = (OrthographicCamera) stage.getViewport().getCamera();
         stageCam.setToOrtho(false);
+        fps = new FPSLogger(59);
 
         board = new Board();
         // TODO if board too small, these go negative, fix that
@@ -84,7 +87,7 @@ public class TetrisScreen implements Screen {
 
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                Gdx.app.log("Key", Input.Keys.toString(keycode));
+//                Gdx.app.log("Key", Input.Keys.toString(keycode));
                 switch (keycode) {
                     case Input.Keys.SPACE:
                         while (!currPiece.fall()) {
@@ -181,6 +184,8 @@ public class TetrisScreen implements Screen {
             gravityTimer = 0;
             currPiece.fall();
         }
+
+        fps.log();
     }
 
     @Override
