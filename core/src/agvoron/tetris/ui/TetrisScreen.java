@@ -22,8 +22,11 @@ import agvoron.tetris.game.Tetromino;
 
 public class TetrisScreen implements Screen {
 
-    private static final float HOR_BOARD_PAD = 200;
+    private static final float HOR_BOARD_PAD = 50;
     private static final float VER_BOARD_PAD = 50;
+    private static final int SIDE_PANEL_WIDTH = 6;
+    private static final int PANEL_PIECE_HEIGHT = 3;
+    private static final int NUMBER_UPCOMING_SHOWN = 4;
 
     private Stage stage;
     private OrthographicCamera stageCam;
@@ -54,8 +57,9 @@ public class TetrisScreen implements Screen {
 
         board = new Board();
         // TODO if board too small, these go negative, fix that
-        float tileSizeW = (Gdx.graphics.getWidth() - (2 * HOR_BOARD_PAD)) / board.getWidth();
-        float tileSizeH = (Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / board.getHeight();
+        float tileSizeW = (Gdx.graphics.getWidth() - (2 * HOR_BOARD_PAD)) / (board.getWidth() + (2 * SIDE_PANEL_WIDTH));
+        float tileSizeH = Math.min((Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / board.getHeight(),
+                (Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / (PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN));
         tileSize = Math.min(tileSizeW, tileSizeH);
 
         if (tileSize == tileSizeW) {
@@ -178,6 +182,24 @@ public class TetrisScreen implements Screen {
         for (int i = 0; i < board.getHeight() + 1; i++) {
             float loopY = startY + (tileSize * i);
             renderer.rectLine(startX, loopY, endX, loopY, 1);
+        }
+        // draw held piece panel
+        for (int i = 0; i < SIDE_PANEL_WIDTH; i++) {
+            float loopX = startX - (tileSize * SIDE_PANEL_WIDTH) + (tileSize * i);
+            for (int j = 0; j < PANEL_PIECE_HEIGHT; j++) {
+                float loopY = endY - (tileSize * PANEL_PIECE_HEIGHT) + (tileSize * (j - 1));
+                renderer.setColor(board.getSquare(0, 0).color);
+                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
+            }
+        }
+        // draw upcoming pieces panel
+        for (int i = 0; i < SIDE_PANEL_WIDTH; i++) {
+            float loopX = endX + (tileSize * i);
+            for (int j = 0; j < PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN; j++) {
+                float loopY = endY - (tileSize * PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN) + (tileSize * (j - 1));
+                renderer.setColor(board.getSquare(0, 0).color);
+                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
+            }
         }
 
         renderer.end();
