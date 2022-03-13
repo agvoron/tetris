@@ -2,10 +2,10 @@ package agvoron.tetris.game;
 
 public class Score {
 
-    private static final int CLEAR = 100;
-    private static final int SOFT_DROP = 0;
-    private static final int HARD_DROP = 0;
-    private static final float COMBO_SCALAR = 0.0f;
+    private static final int CLEAR = 1000;
+    private static final int SOFT_DROP = 5;
+    private static final int HARD_DROP = 5;
+    private static final float COMBO_SCALAR = 0.5f;
 
     private static int score;
     private static int combo;
