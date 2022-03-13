@@ -76,15 +76,15 @@ public class Tetromino {
 
     public Tetromino(Board board) {
         this.board = board;
-        reset();
-        refreshCoordinates();
+        spawnNew();
     }
 
-    private void reset() {
+    private void spawnNew() {
         shape = Shape.values()[MathUtils.random(Shape.values().length - 1)];
         rotation = Rotation.N;
         rootX = shape.getStartingX(board.getWidth());
         rootY = board.getHeight();
+        refreshCoordinates();
     }
 
     public Color getColor() {
@@ -165,7 +165,7 @@ public class Tetromino {
                 editSquare.occupied = true;
             }
             board.clearLines();
-            reset();
+            spawnNew();
             refreshCoordinates();
             return true;
         }

@@ -24,6 +24,7 @@ public class TetrisScreen implements Screen {
 
     private static final float HOR_BOARD_PAD = 50;
     private static final float VER_BOARD_PAD = 50;
+    private static final float SIDE_PANEL_PAD = 25;
     private static final int SIDE_PANEL_WIDTH = 6;
     private static final int PANEL_PIECE_HEIGHT = 3;
     private static final int NUMBER_UPCOMING_SHOWN = 4;
@@ -36,14 +37,29 @@ public class TetrisScreen implements Screen {
     private Label scoreText;
 
     private Board board;
-
-    private float tileSize;
-    private float startX;
-    private float endX;
-    private float startY;
-    private float endY;
+    private Board heldPieceContainer;
+    private Board upcomingPiecesContainer;
 
     private Tetromino currPiece;
+    private Tetromino heldPiece;
+    private Tetromino[] upcomingPieces;
+
+    private float tileSize;
+    private float boardStartX;
+    private float boardEndX;
+    private float boardStartY;
+    private float boardEndY;
+
+    private float heldContainerStartX;
+    private float heldContainerStartY;
+    private float heldContainerEndX;
+    private float heldContainerEndY;
+
+    private float upcomingContainerStartX;
+    private float upcomingContainerStartY;
+    private float upcomingContainerEndX;
+    private float upcomingContainerEndY;
+
     private float gravity;
     private float gravityTimer;
     private boolean softDropActive;
@@ -64,17 +80,43 @@ public class TetrisScreen implements Screen {
 
         if (tileSize == tileSizeW) {
             // constrained by width
-            startX = HOR_BOARD_PAD;
-            endX = Gdx.graphics.getWidth() - HOR_BOARD_PAD;
-            startY = (Gdx.graphics.getHeight() / 2) - (board.getHeight() / 2 * tileSize);
-            endY = (Gdx.graphics.getHeight() / 2) + (board.getHeight() / 2 * tileSize);
+            boardStartX = HOR_BOARD_PAD;
+            boardEndX = Gdx.graphics.getWidth() - HOR_BOARD_PAD;
+            boardStartY = (Gdx.graphics.getHeight() / 2) - (board.getHeight() / 2 * tileSize);
+            boardEndY = (Gdx.graphics.getHeight() / 2) + (board.getHeight() / 2 * tileSize);
 
         } else {
             // constrained by height
-            startX = (Gdx.graphics.getWidth() / 2) - (board.getWidth() / 2 * tileSize);
-            endX = (Gdx.graphics.getWidth() / 2) + (board.getWidth() / 2 * tileSize);
-            startY = VER_BOARD_PAD;
-            endY = Gdx.graphics.getHeight() - VER_BOARD_PAD;
+            boardStartX = (Gdx.graphics.getWidth() / 2) - (board.getWidth() / 2 * tileSize);
+            boardEndX = (Gdx.graphics.getWidth() / 2) + (board.getWidth() / 2 * tileSize);
+            boardStartY = VER_BOARD_PAD;
+            boardEndY = Gdx.graphics.getHeight() - VER_BOARD_PAD;
+        }
+
+        heldPieceContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT);
+        upcomingPiecesContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN);
+
+        // TODO make side panel padding configurable?
+        float sidePanelPad = SIDE_PANEL_PAD;
+        if (true) {
+            sidePanelPad = tileSize;
+        }
+
+        heldContainerStartX = boardStartX - (tileSize * SIDE_PANEL_WIDTH) - sidePanelPad;
+        heldContainerStartY = boardEndY - (tileSize * PANEL_PIECE_HEIGHT);
+        heldContainerEndX = boardStartX - sidePanelPad;
+        heldContainerEndY = boardEndY;
+
+        upcomingContainerStartX = boardEndX + sidePanelPad;
+        upcomingContainerStartY = boardEndY - (tileSize * PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN);
+        upcomingContainerEndX = boardEndX + (tileSize * SIDE_PANEL_WIDTH) + sidePanelPad;
+        upcomingContainerEndY = boardEndY;
+
+        currPiece = new Tetromino(board);
+        heldPiece = new Tetromino(heldPieceContainer);
+        upcomingPieces = new Tetromino[NUMBER_UPCOMING_SHOWN];
+        for (int i = 0; i < NUMBER_UPCOMING_SHOWN; i++) {
+            upcomingPieces[i] = new Tetromino(upcomingPiecesContainer);
         }
 
         scoreText = new Label("Score: 0", Tetris.ui_skin);
@@ -82,7 +124,6 @@ public class TetrisScreen implements Screen {
 
         setupKeyControls();
 
-        currPiece = new Tetromino(board);
         gravity = 0.5f;
         gravityTimer = 1f;
         Score.reset();
@@ -156,51 +197,29 @@ public class TetrisScreen implements Screen {
         renderer.setProjectionMatrix(stageCam.combined);
         renderer.begin(ShapeType.Filled);
 
-        // draw board squares
-        for (int i = 0; i < board.getWidth(); i++) {
-            float loopX = startX + (tileSize * i);
-            for (int j = 0; j < board.getHeight(); j++) {
-                float loopY = startY + (tileSize * j);
-                renderer.setColor(board.getSquare(i, j).color);
-                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
-            }
-        }
-        // draw tetromino
-        int[] tetromino = currPiece.getTetromino();
-        renderer.setColor(currPiece.getColor());
-        for (int i = 0; i < tetromino.length; i += 2) {
-            float loopX = startX + tileSize * tetromino[i];
-            float loopY = startY + tileSize * tetromino[i + 1];
-            renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
-        }
-        // draw board lines TODO top left pixel is missing...!?
-        renderer.setColor(0, 0, 0, .8f);
-        for (int i = 0; i < board.getWidth() + 1; i++) {
-            float loopX = startX + (tileSize * i);
-            renderer.rectLine(loopX, startY, loopX, endY, 1);
-        }
-        for (int i = 0; i < board.getHeight() + 1; i++) {
-            float loopY = startY + (tileSize * i);
-            renderer.rectLine(startX, loopY, endX, loopY, 1);
-        }
+        helperRenderBoard(board, boardStartX, boardStartY);
+
+        helperRenderTetromino(currPiece, boardStartX, boardStartY);
+
+        helperRenderBoardLines(board, boardStartX, boardStartY, boardEndX, boardEndY);
+
         // draw held piece panel
-        for (int i = 0; i < SIDE_PANEL_WIDTH; i++) {
-            float loopX = startX - (tileSize * SIDE_PANEL_WIDTH) + (tileSize * i);
-            for (int j = 0; j < PANEL_PIECE_HEIGHT; j++) {
-                float loopY = endY - (tileSize * PANEL_PIECE_HEIGHT) + (tileSize * (j - 1));
-                renderer.setColor(board.getSquare(0, 0).color);
-                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
-            }
-        }
+        helperRenderBoard(heldPieceContainer, heldContainerStartX, heldContainerStartY);
+
+        helperRenderTetromino(heldPiece, heldContainerStartX, heldContainerStartY);
+
+        helperRenderBoardLines(heldPieceContainer, heldContainerStartX, heldContainerStartY, heldContainerEndX,
+                heldContainerEndY);
+
         // draw upcoming pieces panel
-        for (int i = 0; i < SIDE_PANEL_WIDTH; i++) {
-            float loopX = endX + (tileSize * i);
-            for (int j = 0; j < PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN; j++) {
-                float loopY = endY - (tileSize * PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN) + (tileSize * (j - 1));
-                renderer.setColor(board.getSquare(0, 0).color);
-                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
-            }
+        helperRenderBoard(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY);
+
+        for (Tetromino p : upcomingPieces) {
+            helperRenderTetromino(p, upcomingContainerStartX, upcomingContainerStartY);
         }
+
+        helperRenderBoardLines(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY,
+                upcomingContainerEndX, upcomingContainerEndY);
 
         renderer.end();
 
@@ -221,6 +240,40 @@ public class TetrisScreen implements Screen {
         scoreText.setText("Score: " + Score.getScore());
 
         fps.log();
+    }
+
+    private void helperRenderBoard(Board b, float startX, float startY) {
+        for (int i = 0; i < b.getWidth(); i++) {
+            float loopX = startX + (tileSize * i);
+            for (int j = 0; j < b.getHeight(); j++) {
+                float loopY = startY + (tileSize * j);
+                renderer.setColor(b.getSquare(i, j).color);
+                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
+            }
+        }
+    }
+
+    private void helperRenderTetromino(Tetromino piece, float startX, float startY) {
+        int[] tetromino = piece.getTetromino();
+        renderer.setColor(piece.getColor());
+        for (int i = 0; i < tetromino.length; i += 2) {
+            float loopX = startX + tileSize * tetromino[i];
+            float loopY = startY + tileSize * tetromino[i + 1];
+            renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
+        }
+    }
+
+    private void helperRenderBoardLines(Board b, float startX, float startY, float endX, float endY) {
+        // TODO top left pixel is missing...!?
+        renderer.setColor(0, 0, 0, .8f);
+        for (int i = 0; i < b.getWidth() + 1; i++) {
+            float loopX = startX + (tileSize * i);
+            renderer.rectLine(loopX, startY, loopX, endY, 1);
+        }
+        for (int i = 0; i < b.getHeight() + 1; i++) {
+            float loopY = startY + (tileSize * i);
+            renderer.rectLine(startX, loopY, endX, loopY, 1);
+        }
     }
 
     @Override
