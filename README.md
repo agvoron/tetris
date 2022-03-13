@@ -21,9 +21,9 @@ I'd like to learn a bit more LibGDX as I go.
     * ~See the tetris board~
     * ~See pieces as they fall~
     * ~See placed pieces~
-    * Show score
-    * See upcoming pieces
-    * See held piece
+    * ~Show score~
+    * See upcoming pieces nicely
+    * See held piece nicely
     * Snazzy visuals
         * Placing
         * Clearing
@@ -39,10 +39,10 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Dropping slow~
     * ~Dropping fast~
     * ~Clearing lines~
-    * Give score
+    * ~Give score correctly~
     * Level up and increase gravity
     * Topping out and losing
-    * Hold a piece
+    * ~Hold a piece~
     * Keys repeat if held
     * Rotations will move the piece aside if needed
     * Moving can delay landing (e.g. for T-spin)
