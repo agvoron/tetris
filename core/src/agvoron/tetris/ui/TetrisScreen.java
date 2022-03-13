@@ -19,6 +19,7 @@ import agvoron.tetris.Tetris;
 import agvoron.tetris.game.Board;
 import agvoron.tetris.game.Score;
 import agvoron.tetris.game.Tetromino;
+import agvoron.tetris.game.Tetromino.Shape;
 
 public class TetrisScreen implements Screen {
 
@@ -305,7 +306,13 @@ public class TetrisScreen implements Screen {
     }
 
     private void helperHoldPiece() {
-        heldPiece = new Tetromino(heldPieceContainer, currPiece.getShape());
+        Shape saveShape = currPiece.getShape();
+        if (heldPiece == null) {
+            currPiece = new Tetromino(board, upcomingPieces[0].getShape());
+        } else {
+            currPiece = new Tetromino(board, heldPiece.getShape());
+        }
+        heldPiece = new Tetromino(heldPieceContainer, saveShape);
     }
 
 }
