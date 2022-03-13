@@ -109,21 +109,6 @@ public class Tetromino {
         return tetromino;
     }
 
-    public boolean teleport(int x, int y) {
-        int saveX = rootX;
-        int saveY = rootY;
-        rootX = x;
-        rootY = y;
-        refreshCoordinates();
-        if (testForHit()) {
-            rootX = saveX;
-            rootY = saveY;
-            refreshCoordinates();
-            return true;
-        }
-        return false;
-    }
-
     public boolean translateRight() {
         rootX += 1;
         refreshCoordinates();
@@ -140,6 +125,29 @@ public class Tetromino {
         refreshCoordinates();
         if (testForHit()) {
             rootX += 1;
+            refreshCoordinates();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean translateUp() {
+        rootY += 1;
+        refreshCoordinates();
+        if (testForHit()) {
+            rootY -= 1;
+            refreshCoordinates();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setRotation(Rotation r) {
+        Rotation saved = rotation;
+        rotation = r;
+        refreshCoordinates();
+        if (testForHit()) {
+            rotation = saved;
             refreshCoordinates();
             return true;
         }

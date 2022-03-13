@@ -20,6 +20,7 @@ import agvoron.tetris.game.Board;
 import agvoron.tetris.game.Score;
 import agvoron.tetris.game.Square;
 import agvoron.tetris.game.Tetromino;
+import agvoron.tetris.game.Tetromino.Rotation;
 import agvoron.tetris.game.Tetromino.Shape;
 
 public class TetrisScreen implements Screen {
@@ -27,7 +28,7 @@ public class TetrisScreen implements Screen {
     private static final float HOR_BOARD_PAD = 50;
     private static final float VER_BOARD_PAD = 50;
     private static final float SIDE_PANEL_PAD = 25;
-    private static final int SIDE_PANEL_WIDTH = 6;
+    private static final int SIDE_PANEL_WIDTH = 5;
     private static final int PANEL_PIECE_HEIGHT = 3;
     private static final int NUMBER_UPCOMING_SHOWN = 4;
 
@@ -119,7 +120,7 @@ public class TetrisScreen implements Screen {
         heldPiece = null;
         upcomingPieces = new Tetromino[NUMBER_UPCOMING_SHOWN];
         for (int i = 0; i < NUMBER_UPCOMING_SHOWN; i++) {
-            upcomingPieces[i] = new Tetromino(upcomingPiecesContainer);
+            upcomingPieces[i] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
         }
 
         scoreText = new Label("Score: 0", Tetris.ui_skin);
@@ -215,7 +216,8 @@ public class TetrisScreen implements Screen {
         helperRenderBoard(heldPieceContainer, heldContainerStartX, heldContainerStartY);
 
         if (heldPiece != null) {
-            helperRenderTetromino(heldPiece, heldContainerStartX, heldContainerStartY);
+            helperRenderTetromino(heldPiece, heldContainerStartX,
+                    heldContainerStartY - (PANEL_PIECE_HEIGHT * tileSize));
         }
 
         helperRenderBoardLines(heldPieceContainer, heldContainerStartX, heldContainerStartY, heldContainerEndX,
@@ -224,8 +226,9 @@ public class TetrisScreen implements Screen {
         // draw upcoming pieces panel
         helperRenderBoard(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY);
 
-        for (Tetromino p : upcomingPieces) {
-            helperRenderTetromino(p, upcomingContainerStartX, upcomingContainerStartY);
+        for (int i = 0; i < upcomingPieces.length; i++) {
+            helperRenderTetromino(upcomingPieces[i], upcomingContainerStartX,
+                    upcomingContainerStartY - (PANEL_PIECE_HEIGHT * tileSize * (i + 1)));
         }
 
         helperRenderBoardLines(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY,
@@ -340,7 +343,7 @@ public class TetrisScreen implements Screen {
         } else {
             currPiece = new Tetromino(board, heldPiece.getShape());
         }
-        heldPiece = new Tetromino(heldPieceContainer, saveShape);
+        heldPiece = helperPositionForDisplay(new Tetromino(heldPieceContainer, saveShape));
         return false;
     }
 
@@ -349,7 +352,40 @@ public class TetrisScreen implements Screen {
         for (int i = 0; i < upcomingPieces.length - 1; i++) {
             upcomingPieces[i] = upcomingPieces[i + 1];
         }
-        upcomingPieces[upcomingPieces.length - 1] = new Tetromino(upcomingPiecesContainer);
+        upcomingPieces[upcomingPieces.length - 1] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
+    }
+
+    /** Helper to rotate and position display pieces for aesthetics only */
+    private Tetromino helperPositionForDisplay(Tetromino piece) {
+        switch (piece.getShape()) {
+            case I:
+                piece.setRotation(Rotation.N);
+                piece.translateUp();
+                break;
+            case J:
+                piece.setRotation(Rotation.E);
+                piece.fall();
+                break;
+            case L:
+                piece.setRotation(Rotation.W);
+                piece.fall();
+                piece.translateRight();
+                break;
+            case O:
+                piece.setRotation(Rotation.N);
+                break;
+            case S:
+                piece.setRotation(Rotation.E);
+                break;
+            case T:
+                piece.setRotation(Rotation.E);
+                piece.translateRight();
+                break;
+            case Z:
+                piece.setRotation(Rotation.E);
+                break;
+        }
+        return piece;
     }
 
 }
