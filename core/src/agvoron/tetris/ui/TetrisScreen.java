@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import agvoron.tetris.Tetris;
 import agvoron.tetris.game.Board;
 import agvoron.tetris.game.Score;
+import agvoron.tetris.game.Square;
 import agvoron.tetris.game.Tetromino;
 import agvoron.tetris.game.Tetromino.Shape;
 
@@ -235,7 +236,16 @@ public class TetrisScreen implements Screen {
         gravityTimer += (softDropActive ? delta * 4 : delta);
         if (gravityTimer > gravity) {
             gravityTimer = 0;
-            currPiece.fall();
+            if (currPiece.fall()) {
+                int[] tetromino = currPiece.getTetromino();
+                for (int i = 0; i < tetromino.length; i += 2) {
+                    Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
+                    editSquare.color = currPiece.getColor();
+                    editSquare.occupied = true;
+                }
+                board.clearLines();
+                helperGrabUpcoming();
+            }
             if (softDropActive) {
                 Score.trickleSoftDrop();
             }
@@ -308,11 +318,19 @@ public class TetrisScreen implements Screen {
     private void helperHoldPiece() {
         Shape saveShape = currPiece.getShape();
         if (heldPiece == null) {
-            currPiece = new Tetromino(board, upcomingPieces[0].getShape());
+            helperGrabUpcoming();
         } else {
             currPiece = new Tetromino(board, heldPiece.getShape());
         }
         heldPiece = new Tetromino(heldPieceContainer, saveShape);
+    }
+
+    private void helperGrabUpcoming() {
+        currPiece = new Tetromino(board, upcomingPieces[0].getShape());
+        for (int i = 0; i < upcomingPieces.length - 1; i++) {
+            upcomingPieces[i] = upcomingPieces[i + 1];
+        }
+        upcomingPieces[upcomingPieces.length - 1] = new Tetromino(upcomingPiecesContainer);
     }
 
 }

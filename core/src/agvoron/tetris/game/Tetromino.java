@@ -188,14 +188,6 @@ public class Tetromino {
             // we have landed
             rootY += 1;
             refreshCoordinates();
-            for (int i = 0; i < tetromino.length; i += 2) {
-                Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
-                editSquare.color = getColor();
-                editSquare.occupied = true;
-            }
-            board.clearLines();
-            spawnRandom();
-            refreshCoordinates();
             return true;
         }
         return false;
