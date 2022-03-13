@@ -1,6 +1,9 @@
 package agvoron.tetris.ui;
 
+import java.util.Map.Entry;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -16,9 +19,13 @@ import agvoron.tetris.Tetris;
 public class SettingsScreen implements Screen {
 
     private Stage stage;
+    
+    private String uiStateChoosingKey;
+    private TextButton choosingKeyButton;
 
     public SettingsScreen() {
         stage = new Stage(new ScreenViewport());
+        uiStateChoosingKey = null;
 
         Table table = new Table();
 
@@ -26,6 +33,30 @@ public class SettingsScreen implements Screen {
         table.add(title);
 
         table.row();
+        
+        for (final Entry<String, Integer> entry : Tetris.settings.keys.entrySet()) {
+            Label keyName = new Label(entry.getKey(), Tetris.ui_skin);
+            table.add(keyName);
+            final TextButton keyButton = new TextButton(Input.Keys.toString(entry.getValue()), Tetris.ui_skin);
+            keyButton.addListener(new InputListener() {
+                
+                private TextButton myButton = keyButton;
+                
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    uiStateChoosingKey = entry.getKey();
+                    choosingKeyButton = myButton;
+                    choosingKeyButton.setText("Press Key...");
+                }
+
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+            });
+            table.add(keyButton);
+            table.row();
+        }
 
         TextButton save = new TextButton("Save", Tetris.ui_skin);
         save.addListener(new InputListener() {
@@ -48,6 +79,25 @@ public class SettingsScreen implements Screen {
         table.pad(70);
         table.debugAll();
         stage.addActor(table);
+        
+        setupKeyHandlers();
+    }
+    
+    private void setupKeyHandlers() {
+        stage.addListener(new InputListener() {
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (uiStateChoosingKey != null) {
+                    Tetris.settings.keys.put(uiStateChoosingKey, keycode);
+                    choosingKeyButton.setText(Input.Keys.toString(keycode));
+                    choosingKeyButton = null;
+                    uiStateChoosingKey = null;
+                }
+                return super.keyDown(event, keycode);
+            }
+
+        });
     }
 
     @Override

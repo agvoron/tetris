@@ -15,6 +15,8 @@ public class Tetris extends Game {
     /** Use to create UI elements */
     public static Skin ui_skin;
 
+    public static Settings settings;
+
     private static TitleScreen titleScreen;
     private static TetrisScreen tetrisScreen;
     private static SettingsScreen settingsScreen;
@@ -24,6 +26,7 @@ public class Tetris extends Game {
         // TODO loading bar here - use Asset Manager?
         app = this;
         ui_skin = new Skin(Gdx.files.internal("plain-james/plain-james-ui.json"));
+        settings = new Settings(Gdx.files.internal("settings.json"));
         titleScreen = new TitleScreen();
         settingsScreen = null;
         tetrisScreen = null;
