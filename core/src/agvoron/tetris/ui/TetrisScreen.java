@@ -113,7 +113,7 @@ public class TetrisScreen implements Screen {
         upcomingContainerEndY = boardEndY;
 
         currPiece = new Tetromino(board);
-        heldPiece = new Tetromino(heldPieceContainer);
+        heldPiece = null;
         upcomingPieces = new Tetromino[NUMBER_UPCOMING_SHOWN];
         for (int i = 0; i < NUMBER_UPCOMING_SHOWN; i++) {
             upcomingPieces[i] = new Tetromino(upcomingPiecesContainer);
@@ -162,6 +162,7 @@ public class TetrisScreen implements Screen {
                         currPiece.rotateRight();
                         break;
                     case Input.Keys.C:
+                        helperHoldPiece();
                         break;
                     case Input.Keys.A:
                         currPiece.rotateFlip();
@@ -206,7 +207,9 @@ public class TetrisScreen implements Screen {
         // draw held piece panel
         helperRenderBoard(heldPieceContainer, heldContainerStartX, heldContainerStartY);
 
-        helperRenderTetromino(heldPiece, heldContainerStartX, heldContainerStartY);
+        if (heldPiece != null) {
+            helperRenderTetromino(heldPiece, heldContainerStartX, heldContainerStartY);
+        }
 
         helperRenderBoardLines(heldPieceContainer, heldContainerStartX, heldContainerStartY, heldContainerEndX,
                 heldContainerEndY);
@@ -299,6 +302,10 @@ public class TetrisScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    private void helperHoldPiece() {
+        heldPiece = new Tetromino(heldPieceContainer, currPiece.getShape());
     }
 
 }

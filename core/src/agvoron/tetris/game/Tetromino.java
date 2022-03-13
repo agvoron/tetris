@@ -76,15 +76,29 @@ public class Tetromino {
 
     public Tetromino(Board board) {
         this.board = board;
-        spawnNew();
+        spawnRandom();
     }
 
-    private void spawnNew() {
-        shape = Shape.values()[MathUtils.random(Shape.values().length - 1)];
+    // force spawning with specific shape
+    public Tetromino(Board board, Shape shape) {
+        this.board = board;
+        spawnAsShape(shape);
+    }
+
+    private void spawnRandom() {
+        spawnAsShape(Shape.values()[MathUtils.random(Shape.values().length - 1)]);
+    }
+
+    private void spawnAsShape(Shape shape) {
+        this.shape = shape;
         rotation = Rotation.N;
         rootX = shape.getStartingX(board.getWidth());
         rootY = board.getHeight();
         refreshCoordinates();
+    }
+
+    public Shape getShape() {
+        return shape;
     }
 
     public Color getColor() {
@@ -93,6 +107,21 @@ public class Tetromino {
 
     public int[] getTetromino() {
         return tetromino;
+    }
+
+    public boolean teleport(int x, int y) {
+        int saveX = rootX;
+        int saveY = rootY;
+        rootX = x;
+        rootY = y;
+        refreshCoordinates();
+        if (testForHit()) {
+            rootX = saveX;
+            rootY = saveY;
+            refreshCoordinates();
+            return true;
+        }
+        return false;
     }
 
     public boolean translateRight() {
@@ -165,7 +194,7 @@ public class Tetromino {
                 editSquare.occupied = true;
             }
             board.clearLines();
-            spawnNew();
+            spawnRandom();
             refreshCoordinates();
             return true;
         }
