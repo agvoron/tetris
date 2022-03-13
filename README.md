@@ -16,7 +16,7 @@ I'd like to learn a bit more LibGDX as I go.
     * Configure handling (basic)
     * Configure graphics
     * Configure sound
-    * Settings are persisted
+    * ~Settings are persisted~
     * Looks nice
 * Tetris Screen
     * Restart button

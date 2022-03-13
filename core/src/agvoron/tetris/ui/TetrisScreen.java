@@ -1,7 +1,6 @@
 package agvoron.tetris.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL30;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import agvoron.tetris.Settings;
 import agvoron.tetris.Tetris;
 import agvoron.tetris.game.Board;
 import agvoron.tetris.game.Score;
@@ -140,51 +140,38 @@ public class TetrisScreen implements Screen {
      */
     private void setupKeyControls() {
         stage.addListener(new InputListener() {
-
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-//                Gdx.app.log("Key", Input.Keys.toString(keycode));
-                switch (keycode) {
-                    case Input.Keys.SPACE:
-                        int fallDistance = 0;
-                        while (!currPiece.fall()) {
-                            fallDistance++;
-                        }
-                        helperPlacePiece();
-                        helperGrabUpcoming();
-                        Score.hardDrop(fallDistance);
-                        break;
-                    case Input.Keys.DOWN:
-                        softDropActive = true;
-                        break;
-                    case Input.Keys.RIGHT:
-                        currPiece.translateRight();
-                        break;
-                    case Input.Keys.LEFT:
-                        currPiece.translateLeft();
-                        break;
-                    case Input.Keys.Z:
-                        currPiece.rotateLeft();
-                        break;
-                    case Input.Keys.X:
-                        currPiece.rotateRight();
-                        break;
-                    case Input.Keys.C:
-                        helperHoldPiece();
-                        break;
-                    case Input.Keys.A:
-                        currPiece.rotateFlip();
-                        break;
+                if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[0])) {
+                    int fallDistance = 0;
+                    while (!currPiece.fall()) {
+                        fallDistance++;
+                    }
+                    helperPlacePiece();
+                    helperGrabUpcoming();
+                    Score.hardDrop(fallDistance);
+                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[1])) {
+                    softDropActive = true;
+                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[2])) {
+                    currPiece.translateRight();
+                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[3])) {
+                    currPiece.translateLeft();
+                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[4])) {
+                    currPiece.rotateRight();
+                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[5])) {
+                    currPiece.rotateLeft();
+                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[6])) {
+                    helperHoldPiece();
+                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[7])) {
+                    currPiece.rotateFlip();
                 }
                 return super.keyDown(event, keycode);
             }
 
             @Override
             public boolean keyUp(InputEvent event, int keycode) {
-                switch (keycode) {
-                    case Input.Keys.DOWN:
-                        softDropActive = false;
-                        break;
+                if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[1])) {
+                    softDropActive = false;
                 }
                 return super.keyUp(event, keycode);
             }
