@@ -6,6 +6,7 @@ I'd like to learn a bit more LibGDX as I go.
 
 ## Goals
 * Title Screen
+    * Asset loading bar
     * See how-to-play instructions
     * Settings button
     * ~Play button~
@@ -17,19 +18,23 @@ I'd like to learn a bit more LibGDX as I go.
     * Configure sound
     * Settings are persisted
     * Looks nice
+* Tetris Screen
+    * Restart button
+    * Return to title button
 * Game graphics/UI
     * ~See the tetris board~
     * ~See pieces as they fall~
     * ~See placed pieces~
     * ~Show score~
-    * See upcoming pieces nicely
-    * See held piece nicely
-    * Snazzy visuals
+    * ~See upcoming pieces nicely~
+    * ~See held piece nicely~
+    * Draw squares using nice assets
+    * Snazzy particle visuals
         * Placing
         * Clearing
         * In danger
         * Combo
-    * Looks nice
+    * ~Looks nice~
     * Ghost piece
 * Gameplay
     * ~Random pieces appear and fall~

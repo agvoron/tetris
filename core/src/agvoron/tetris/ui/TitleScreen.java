@@ -31,7 +31,7 @@ public class TitleScreen implements Screen {
         play.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Tetris.app.setScreen(new TetrisScreen());
+                Tetris.app.openTetris();
             }
 
             @Override
@@ -40,6 +40,22 @@ public class TitleScreen implements Screen {
             }
         });
         table.add(play);
+
+        table.row();
+
+        TextButton settings = new TextButton("Settings", Tetris.ui_skin);
+        settings.addListener(new InputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Tetris.app.openSettings();
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+        });
+        table.add(settings);
 
         table.setSkin(Tetris.ui_skin);
         table.setFillParent(true);
