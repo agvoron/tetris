@@ -65,6 +65,7 @@ public class TetrisScreen implements Screen {
     private float gravity;
     private float gravityTimer;
     private boolean softDropActive;
+    private boolean holdAvailable;
 
     public TetrisScreen() {
         stage = new Stage(new ScreenViewport());
@@ -129,6 +130,8 @@ public class TetrisScreen implements Screen {
         gravity = 0.5f;
         gravityTimer = 1f;
         Score.reset();
+        softDropActive = false;
+        holdAvailable = true;
     }
 
     /**
@@ -323,9 +326,14 @@ public class TetrisScreen implements Screen {
             editSquare.occupied = true;
         }
         board.clearLines();
+        holdAvailable = true;
     }
 
     private void helperHoldPiece() {
+        if (!holdAvailable) {
+            return;
+        }
+        holdAvailable = false;
         Shape saveShape = currPiece.getShape();
         if (heldPiece == null) {
             helperGrabUpcoming();
