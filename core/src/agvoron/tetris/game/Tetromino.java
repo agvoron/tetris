@@ -24,7 +24,7 @@ public class Tetromino {
     private static final Color GREEN = new Color(0.2f, 0.8f, 0.15f, 1f);
     private static final Color RED = new Color(0.9f, 0.15f, 0.15f, 1f);
 
-    private enum Shape {
+    public enum Shape {
         I(LIGHT_BLUE) {
             @Override
             public int getStartingX(int boardWidth) {
@@ -48,7 +48,7 @@ public class Tetromino {
         }
     }
 
-    private enum Rotation {
+    public enum Rotation {
         N {
             @Override
             public Rotation left() {
