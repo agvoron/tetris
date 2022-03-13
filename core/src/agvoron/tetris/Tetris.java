@@ -3,12 +3,17 @@ package agvoron.tetris;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.SerializationException;
 
 import agvoron.tetris.ui.SettingsScreen;
 import agvoron.tetris.ui.TetrisScreen;
 import agvoron.tetris.ui.TitleScreen;
 
 public class Tetris extends Game {
+
+    private static final String SETTINGS_FILENAME = "settings.json";
+
     /** Use only to switch screens */
     public static Tetris app;
 
@@ -26,7 +31,12 @@ public class Tetris extends Game {
         // TODO loading bar here - use Asset Manager?
         app = this;
         ui_skin = new Skin(Gdx.files.internal("plain-james/plain-james-ui.json"));
-        settings = new Settings(Gdx.files.internal("settings.json"));
+        try {
+            // TODO using built-in serializer; learn about customizing it, and validation
+            settings = new Json().fromJson(Settings.class, Gdx.files.local(SETTINGS_FILENAME));
+        } catch (SerializationException e) {
+            settings = new Settings();
+        }
         titleScreen = new TitleScreen();
         settingsScreen = null;
         tetrisScreen = null;
@@ -76,5 +86,9 @@ public class Tetris extends Game {
             tetrisScreen = new TetrisScreen();
         }
         setScreen(tetrisScreen);
+    }
+
+    public void saveSettings() {
+        settings.save(Gdx.files.local(SETTINGS_FILENAME));
     }
 }

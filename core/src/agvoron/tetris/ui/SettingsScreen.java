@@ -19,7 +19,7 @@ import agvoron.tetris.Tetris;
 public class SettingsScreen implements Screen {
 
     private Stage stage;
-    
+
     private String uiStateChoosingKey;
     private TextButton choosingKeyButton;
 
@@ -33,15 +33,15 @@ public class SettingsScreen implements Screen {
         table.add(title);
 
         table.row();
-        
+
         for (final Entry<String, Integer> entry : Tetris.settings.keys.entrySet()) {
             Label keyName = new Label(entry.getKey(), Tetris.ui_skin);
             table.add(keyName);
             final TextButton keyButton = new TextButton(Input.Keys.toString(entry.getValue()), Tetris.ui_skin);
             keyButton.addListener(new InputListener() {
-                
+
                 private TextButton myButton = keyButton;
-                
+
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     uiStateChoosingKey = entry.getKey();
@@ -62,6 +62,7 @@ public class SettingsScreen implements Screen {
         save.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Tetris.app.saveSettings();
                 Tetris.app.openTitle();
             }
 
@@ -79,10 +80,10 @@ public class SettingsScreen implements Screen {
         table.pad(70);
         table.debugAll();
         stage.addActor(table);
-        
+
         setupKeyHandlers();
     }
-    
+
     private void setupKeyHandlers() {
         stage.addListener(new InputListener() {
 

@@ -8,11 +8,11 @@ I'd like to learn a bit more LibGDX as I go.
 * Title Screen
     * Asset loading bar
     * See how-to-play instructions
-    * Settings button
+    * ~Settings button~
     * ~Play button~
     * Looks nice
 * Settings Screen
-    * Configure key binds
+    * ~Configure key binds~
     * Configure handling (basic)
     * Configure graphics
     * Configure sound

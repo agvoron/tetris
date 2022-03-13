@@ -1,0 +1,12 @@
+{
+keys: {
+	Left: 21
+	Soft Drop: 20
+	Right: 22
+	Hard Drop: 62
+	Spin CW: 52
+	Spin CCW: 54
+	Flip: 29
+	Hold: 31
+}
+}

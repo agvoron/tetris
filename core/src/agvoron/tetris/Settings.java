@@ -2,8 +2,10 @@ package agvoron.tetris;
 
 import java.util.HashMap;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Json;
 
 public class Settings {
 
@@ -25,10 +27,10 @@ public class Settings {
         keys.put(KEY_NAMES[7], Input.Keys.A);
     }
 
-    /** Import from file */
-    public Settings(FileHandle file) {
-        // TODO
-        this();
+    public void save(FileHandle file) {
+        Json json = new Json();
+        json.setUsePrototypes(false);
+        Gdx.files.local("settings.json").writeString(json.prettyPrint(this), false);
     }
 
 }
