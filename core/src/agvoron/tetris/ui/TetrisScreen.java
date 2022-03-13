@@ -331,7 +331,7 @@ public class TetrisScreen implements Screen {
 
     private boolean helperHoldPiece() {
         if (!holdAvailable) {
-            return false;
+            return true;
         }
         holdAvailable = false;
         Shape saveShape = currPiece.getShape();
@@ -341,7 +341,7 @@ public class TetrisScreen implements Screen {
             currPiece = new Tetromino(board, heldPiece.getShape());
         }
         heldPiece = new Tetromino(heldPieceContainer, saveShape);
-        return true;
+        return false;
     }
 
     private void helperGrabUpcoming() {
