@@ -146,6 +146,8 @@ public class TetrisScreen implements Screen {
                         while (!currPiece.fall()) {
                             fallDistance++;
                         }
+                        helperPlacePiece();
+                        helperGrabUpcoming();
                         Score.hardDrop(fallDistance);
                         break;
                     case Input.Keys.DOWN:
@@ -237,13 +239,7 @@ public class TetrisScreen implements Screen {
         if (gravityTimer > gravity) {
             gravityTimer = 0;
             if (currPiece.fall()) {
-                int[] tetromino = currPiece.getTetromino();
-                for (int i = 0; i < tetromino.length; i += 2) {
-                    Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
-                    editSquare.color = currPiece.getColor();
-                    editSquare.occupied = true;
-                }
-                board.clearLines();
+                helperPlacePiece();
                 helperGrabUpcoming();
             }
             if (softDropActive) {
@@ -313,6 +309,20 @@ public class TetrisScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    /**
+     * Run this after currPiece.fall() returns true, to update the board with the
+     * final location of currPiece
+     */
+    private void helperPlacePiece() {
+        int[] tetromino = currPiece.getTetromino();
+        for (int i = 0; i < tetromino.length; i += 2) {
+            Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
+            editSquare.color = currPiece.getColor();
+            editSquare.occupied = true;
+        }
+        board.clearLines();
     }
 
     private void helperHoldPiece() {
