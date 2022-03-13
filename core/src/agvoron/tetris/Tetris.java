@@ -4,21 +4,30 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import agvoron.tetris.ui.SettingsScreen;
+import agvoron.tetris.ui.TetrisScreen;
 import agvoron.tetris.ui.TitleScreen;
 
 public class Tetris extends Game {
     /** Use only to switch screens */
-    static public Tetris app;
+    public static Tetris app;
 
     /** Use to create UI elements */
-    static public Skin ui_skin;
+    public static Skin ui_skin;
+
+    private static TitleScreen titleScreen;
+    private static TetrisScreen tetrisScreen;
+    private static SettingsScreen settingsScreen;
 
     @Override
     public void create() {
         // TODO loading bar here - use Asset Manager?
         app = this;
         ui_skin = new Skin(Gdx.files.internal("plain-james/plain-james-ui.json"));
-        this.setScreen(new TitleScreen());
+        titleScreen = new TitleScreen();
+        settingsScreen = null;
+        tetrisScreen = null;
+        openTitle();
     }
 
     @Override
@@ -28,7 +37,41 @@ public class Tetris extends Game {
 
     @Override
     public void dispose() {
-        // TODO consider strategy for disposing screens
+        if (titleScreen != null) {
+            titleScreen.dispose();
+        }
+        if (settingsScreen != null) {
+            settingsScreen.dispose();
+        }
+        if (tetrisScreen != null) {
+            tetrisScreen.dispose();
+        }
         ui_skin.dispose();
+    }
+
+    public void openTitle() {
+        setScreen(titleScreen);
+    }
+
+    public void openSettings() {
+        // settings changes may require a fresh tetris screen
+        if (tetrisScreen != null) {
+            tetrisScreen.dispose();
+            tetrisScreen = null;
+        }
+        // a fresh settings screen will be required either way
+        if (settingsScreen != null) {
+            settingsScreen.dispose();
+            settingsScreen = null;
+        }
+        settingsScreen = new SettingsScreen();
+        setScreen(settingsScreen);
+    }
+
+    public void openTetris() {
+        if (tetrisScreen == null) {
+            tetrisScreen = new TetrisScreen();
+        }
+        setScreen(tetrisScreen);
     }
 }
