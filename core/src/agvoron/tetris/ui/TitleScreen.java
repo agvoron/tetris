@@ -17,6 +17,11 @@ public class TitleScreen implements Screen {
 
     private Stage stage;
 
+    private Label loading;
+    private TextButton play;
+    private TextButton settings;
+    private boolean isLoading;
+
     public TitleScreen() {
         stage = new Stage(new ScreenViewport());
 
@@ -27,7 +32,12 @@ public class TitleScreen implements Screen {
 
         table.row();
 
-        TextButton play = new TextButton("Play", Tetris.ui_skin);
+        loading = new Label("Loading... 0%", Tetris.ui_skin);
+        table.add(loading);
+
+        table.row();
+
+        play = new TextButton("Play", Tetris.ui_skin);
         play.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -40,10 +50,11 @@ public class TitleScreen implements Screen {
             }
         });
         table.add(play);
+        play.setDisabled(true);
 
         table.row();
 
-        TextButton settings = new TextButton("Settings", Tetris.ui_skin);
+        settings = new TextButton("Settings", Tetris.ui_skin);
         settings.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -56,6 +67,7 @@ public class TitleScreen implements Screen {
             }
         });
         table.add(settings);
+        settings.setDisabled(true);
 
         table.setSkin(Tetris.ui_skin);
         table.setFillParent(true);
@@ -64,6 +76,8 @@ public class TitleScreen implements Screen {
         table.pad(70);
         table.debugAll();
         stage.addActor(table);
+
+        isLoading = true;
     }
 
     @Override
@@ -73,6 +87,16 @@ public class TitleScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if (isLoading) {
+            if (Tetris.app.manager.update()) {
+                loading.setText("Done!");
+                play.setDisabled(false);
+                settings.setDisabled(false);
+                isLoading = false;
+            } else {
+                loading.setText("Loading... " + Math.round(Tetris.app.manager.getProgress() * 100) + "%");
+            }
+        }
         ScreenUtils.clear(1, 1, 1, 1);
         stage.act();
         stage.draw();

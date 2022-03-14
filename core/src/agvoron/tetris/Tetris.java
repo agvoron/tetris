@@ -2,6 +2,8 @@ package agvoron.tetris;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.SerializationException;
@@ -14,7 +16,6 @@ public class Tetris extends Game {
 
     private static final String SETTINGS_FILENAME = "settings.json";
 
-    /** Use only to switch screens */
     public static Tetris app;
 
     /** Use to create UI elements */
@@ -26,10 +27,24 @@ public class Tetris extends Game {
     private static TetrisScreen tetrisScreen;
     private static SettingsScreen settingsScreen;
 
+    public AssetManager manager;
+
     @Override
     public void create() {
-        // TODO loading bar here - use Asset Manager?
         app = this;
+
+        // prep to load resources
+        manager = new AssetManager();
+        manager.load("background.png", Texture.class);
+        manager.load("blue.png", Texture.class);
+        manager.load("darkblue.png", Texture.class);
+        manager.load("green.png", Texture.class);
+        manager.load("orange.png", Texture.class);
+        manager.load("purple.png", Texture.class);
+        manager.load("red.png", Texture.class);
+        manager.load("yellow.png", Texture.class);
+
+        // resources required for title are not managed by AssetManager
         ui_skin = new Skin(Gdx.files.internal("plain-james/plain-james-ui.json"));
         try {
             // TODO using built-in serializer; learn about customizing it, and validation
@@ -37,6 +52,7 @@ public class Tetris extends Game {
         } catch (SerializationException e) {
             settings = new Settings();
         }
+
         titleScreen = new TitleScreen();
         settingsScreen = null;
         tetrisScreen = null;
@@ -60,6 +76,7 @@ public class Tetris extends Game {
             tetrisScreen.dispose();
         }
         ui_skin.dispose();
+        manager.dispose();
     }
 
     public void openTitle() {
