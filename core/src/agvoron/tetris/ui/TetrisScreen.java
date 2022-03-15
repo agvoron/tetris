@@ -2,9 +2,12 @@ package agvoron.tetris.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -34,6 +37,7 @@ public class TetrisScreen implements Screen {
 
     private Stage stage;
     private OrthographicCamera stageCam;
+    private SpriteBatch batch;
     private ShapeRenderer renderer; // TODO consider using Shape Drawer from LibGDX community
     private FPSLogger fps;
 
@@ -68,14 +72,34 @@ public class TetrisScreen implements Screen {
     private boolean softDropActive;
     private boolean holdAvailable;
 
+    private Texture background;
+    private Texture blue;
+    private Texture darkblue;
+    private Texture green;
+    private Texture orange;
+    private Texture purple;
+    private Texture red;
+    private Texture yellow;
+
     public TetrisScreen() {
         stage = new Stage(new ScreenViewport());
+        batch = new SpriteBatch();
         renderer = new ShapeRenderer();
         stageCam = (OrthographicCamera) stage.getViewport().getCamera();
         stageCam.setToOrtho(false);
         fps = new FPSLogger(59);
 
         board = new Board();
+
+        background = Tetris.app.manager.get("background.png", Texture.class);
+        blue = Tetris.app.manager.get("blue.png", Texture.class);
+        darkblue = Tetris.app.manager.get("darkblue.png", Texture.class);
+        green = Tetris.app.manager.get("green.png", Texture.class);
+        orange = Tetris.app.manager.get("orange.png", Texture.class);
+        purple = Tetris.app.manager.get("purple.png", Texture.class);
+        red = Tetris.app.manager.get("red.png", Texture.class);
+        yellow = Tetris.app.manager.get("yellow.png", Texture.class);
+
         // TODO if board too small, these go negative, fix that
         float tileSizeW = (Gdx.graphics.getWidth() - (2 * HOR_BOARD_PAD)) / (board.getWidth() + (2 * SIDE_PANEL_WIDTH));
         float tileSizeH = Math.min((Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / board.getHeight(),
@@ -189,35 +213,34 @@ public class TetrisScreen implements Screen {
         ScreenUtils.clear(1, 1, 1, 1);
         Gdx.gl.glEnable(GL30.GL_BLEND);
 
-        // draw Tetris board
-        renderer.setProjectionMatrix(stageCam.combined);
-        renderer.begin(ShapeType.Filled);
+        // these draw calls use SpriteBatch
+        batch.begin();
 
+        // draw background textures for board, held piece, upcoming pieces
         helperRenderBoard(board, boardStartX, boardStartY);
-
-        helperRenderTetromino(currPiece, boardStartX, boardStartY);
-
-        helperRenderBoardLines(board, boardStartX, boardStartY, boardEndX, boardEndY);
-
-        // draw held piece panel
         helperRenderBoard(heldPieceContainer, heldContainerStartX, heldContainerStartY);
+        helperRenderBoard(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY);
 
+        // draw tetromino textures for each
+        helperRenderTetromino(currPiece, boardStartX, boardStartY);
         if (heldPiece != null) {
             helperRenderTetromino(heldPiece, heldContainerStartX,
                     heldContainerStartY - (PANEL_PIECE_HEIGHT * tileSize));
         }
-
-        helperRenderBoardLines(heldPieceContainer, heldContainerStartX, heldContainerStartY, heldContainerEndX,
-                heldContainerEndY);
-
-        // draw upcoming pieces panel
-        helperRenderBoard(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY);
-
         for (int i = 0; i < upcomingPieces.length; i++) {
             helperRenderTetromino(upcomingPieces[i], upcomingContainerStartX,
                     upcomingContainerStartY - (PANEL_PIECE_HEIGHT * tileSize * (i + 1)));
         }
 
+        batch.end();
+
+        // draw board outlines and grid for each, uses ShapeRenderer
+        renderer.setProjectionMatrix(stageCam.combined);
+        renderer.begin(ShapeType.Filled);
+
+        helperRenderBoardLines(board, boardStartX, boardStartY, boardEndX, boardEndY);
+        helperRenderBoardLines(heldPieceContainer, heldContainerStartX, heldContainerStartY, heldContainerEndX,
+                heldContainerEndY);
         helperRenderBoardLines(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY,
                 upcomingContainerEndX, upcomingContainerEndY);
 
@@ -245,27 +268,58 @@ public class TetrisScreen implements Screen {
         fps.log();
     }
 
+    private Texture helperSelectTexture(Color color) {
+        if (color == Tetromino.BLUE) {
+            return darkblue;
+        } else if (color == Tetromino.GREEN) {
+            return green;
+        } else if (color == Tetromino.LIGHT_BLUE) {
+            return blue;
+        } else if (color == Tetromino.ORANGE) {
+            return orange;
+        } else if (color == Tetromino.PURPLE) {
+            return purple;
+        } else if (color == Tetromino.RED) {
+            return red;
+        } else if (color == Tetromino.YELLOW) {
+            return yellow;
+        } else {
+            return background;
+        }
+    }
+
+    /**
+     * Helper to draw board background, must be called in between batch.begin() and
+     * end()
+     */
     private void helperRenderBoard(Board b, float startX, float startY) {
         for (int i = 0; i < b.getWidth(); i++) {
             float loopX = startX + (tileSize * i);
             for (int j = 0; j < b.getHeight(); j++) {
                 float loopY = startY + (tileSize * j);
-                renderer.setColor(b.getSquare(i, j).color);
-                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
+//                renderer.setColor(b.getSquare(i, j).color);
+//                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
+                batch.draw(helperSelectTexture(b.getSquare(i, j).color), loopX, loopY, tileSize, tileSize);
             }
         }
     }
 
+    /** Helper to draw tetrominoes, call between batch.begin() and end() */
     private void helperRenderTetromino(Tetromino piece, float startX, float startY) {
         int[] tetromino = piece.getTetromino();
-        renderer.setColor(piece.getColor());
+//        renderer.setColor(piece.getColor());
         for (int i = 0; i < tetromino.length; i += 2) {
             float loopX = startX + tileSize * tetromino[i];
             float loopY = startY + tileSize * tetromino[i + 1];
-            renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
+//            renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
+            batch.draw(helperSelectTexture(piece.getColor()), loopX, loopY, tileSize, tileSize);
         }
     }
 
+    /**
+     * Helper to draw board outlines and grid, must be called in between
+     * renderer.begin() and end()
+     */
     private void helperRenderBoardLines(Board b, float startX, float startY, float endX, float endY) {
         // TODO top left pixel is missing...!?
         renderer.setColor(0, 0, 0, .8f);

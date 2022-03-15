@@ -16,13 +16,13 @@ public class Tetromino {
     // board coordinates of each square
     private int[] tetromino;
 
-    private static final Color LIGHT_BLUE = new Color(0.3f, 1f, 1f, 1f);
-    private static final Color YELLOW = new Color(1f, 0.9f, 0.25f, 1f);
-    private static final Color PURPLE = new Color(1f, 0.2f, 0.9f, 1f);
-    private static final Color BLUE = new Color(0.2f, 0.2f, 1f, 1f);
-    private static final Color ORANGE = new Color(1f, 0.6f, 0.2f, 1f);
-    private static final Color GREEN = new Color(0.2f, 0.8f, 0.15f, 1f);
-    private static final Color RED = new Color(0.9f, 0.15f, 0.15f, 1f);
+    public static final Color LIGHT_BLUE = new Color(0.3f, 1f, 1f, 1f);
+    public static final Color YELLOW = new Color(1f, 0.9f, 0.25f, 1f);
+    public static final Color PURPLE = new Color(1f, 0.2f, 0.9f, 1f);
+    public static final Color BLUE = new Color(0.2f, 0.2f, 1f, 1f);
+    public static final Color ORANGE = new Color(1f, 0.6f, 0.2f, 1f);
+    public static final Color GREEN = new Color(0.2f, 0.8f, 0.15f, 1f);
+    public static final Color RED = new Color(0.9f, 0.15f, 0.15f, 1f);
 
     public enum Shape {
         I(LIGHT_BLUE) {
