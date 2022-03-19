@@ -1,7 +1,12 @@
 # === Tasks ===
-* Learn about LibGDX asset management/build something to do it myself
-* Draw squares using nice assets
-* Play a sound effect, any sound effect
+* Finish gameplay
+    * Game over
+    * Restart button
+    * Level up
+* Release version 1.0
+* Implement a git branching policy
+* Git release automation
+* Implement unit testing
 
 # === Implementation Notes ===
 
