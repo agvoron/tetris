@@ -45,7 +45,7 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Clearing lines~
     * ~Give score correctly~
     * Level up and increase gravity
-    * Topping out and losing
+    * ~Topping out and losing~
     * ~Hold a piece~
     * Keys repeat if held
     * Rotations will move the piece aside if needed

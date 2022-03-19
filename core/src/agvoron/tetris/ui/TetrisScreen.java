@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -47,6 +48,8 @@ public class TetrisScreen implements Screen {
     private Table infoTable;
     private Label scoreText;
     private Label pausedText;
+    private TextButton restart;
+    private TextButton backToTitle;
 
     private Board board;
     private Board heldPieceContainer;
@@ -156,16 +159,24 @@ public class TetrisScreen implements Screen {
         infoTable = new Table();
         infoTable.setSkin(Tetris.ui_skin);
         infoTable.setFillParent(true);
-        infoTable.center();
+        infoTable.left();
         infoTable.bottom();
         infoTable.pad(5);
         infoTable.debugAll();
         stage.addActor(infoTable);
 
         scoreText = new Label("Score: 0", Tetris.ui_skin);
-        pausedText = new Label("", Tetris.ui_skin);
-        infoTable.add(pausedText);
-        infoTable.add(scoreText);
+        pausedText = new Label("Game Over", Tetris.ui_skin);
+        pausedText.setVisible(false);
+        infoTable.add(scoreText).padLeft(5);
+        infoTable.add(pausedText).padLeft(5);
+
+        restart = new TextButton("Restart", Tetris.ui_skin);
+        backToTitle = new TextButton("Back to Title", Tetris.ui_skin);
+        restart.setVisible(false);
+        backToTitle.setVisible(false);
+        infoTable.add(restart).padLeft(5);
+        infoTable.add(backToTitle).padLeft(5);
 
         setupKeyControls();
 
@@ -463,7 +474,9 @@ public class TetrisScreen implements Screen {
 
     private void helperEndGame() {
         gamePaused = true;
-        pausedText.setText("Game over!   ");
+        pausedText.setVisible(true);
+        restart.setVisible(true);
+        backToTitle.setVisible(true);
     }
 
     private Sound helperSoundRandomThunk() {

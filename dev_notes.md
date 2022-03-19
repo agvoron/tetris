@@ -1,6 +1,5 @@
 # === Tasks ===
 * Finish gameplay
-    * Game over
     * Restart button
     * Level up
 * Release version 1.0
