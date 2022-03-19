@@ -67,7 +67,7 @@ public class TitleScreen implements Screen {
         table.center();
         table.top();
         table.pad(70);
-        table.debugAll();
+//        table.debugAll();
         stage.addActor(table);
 
         isLoading = true;

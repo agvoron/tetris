@@ -152,7 +152,7 @@ public class TetrisScreen implements Screen {
         infoTable.left();
         infoTable.bottom();
         infoTable.pad(5);
-        infoTable.debugAll();
+//        infoTable.debugAll();
         stage.addActor(infoTable);
 
         scoreText = new Label("Score: 0", Tetris.ui_skin);
