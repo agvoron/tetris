@@ -2,12 +2,12 @@ package agvoron.tetris.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -38,15 +38,11 @@ public class TitleScreen implements Screen {
         table.row();
 
         play = new TextButton("Play", Tetris.ui_skin);
-        play.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Tetris.app.openTetris();
-            }
+        play.addListener(new ChangeListener() {
 
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
+            public void changed(ChangeEvent event, Actor actor) {
+                Tetris.app.openTetris();
             }
         });
         table.add(play);
@@ -55,15 +51,11 @@ public class TitleScreen implements Screen {
         table.row();
 
         settings = new TextButton("Settings", Tetris.ui_skin);
-        settings.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Tetris.app.openSettings();
-            }
+        settings.addListener(new ChangeListener() {
 
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
+            public void changed(ChangeEvent event, Actor actor) {
+                Tetris.app.openSettings();
             }
         });
         table.add(settings);
