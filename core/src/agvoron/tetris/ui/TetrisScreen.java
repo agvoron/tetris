@@ -109,7 +109,6 @@ public class TetrisScreen implements Screen {
 
         setupInitGameState();
 
-        // TODO if board too small, these go negative, fix that
         float tileSizeW = (Gdx.graphics.getWidth() - (2 * HOR_BOARD_PAD)) / (board.getWidth() + (2 * SIDE_PANEL_WIDTH));
         float tileSizeH = Math.min((Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / board.getHeight(),
                 (Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / (PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN));
@@ -130,7 +129,6 @@ public class TetrisScreen implements Screen {
             boardEndY = Gdx.graphics.getHeight() - VER_BOARD_PAD;
         }
 
-        // TODO make side panel padding configurable?
         float sidePanelPad = SIDE_PANEL_PAD;
         if (true) {
             sidePanelPad = tileSize;
@@ -400,11 +398,11 @@ public class TetrisScreen implements Screen {
      * renderer.begin() and end()
      */
     private void helperRenderBoardLines(Board b, float startX, float startY, float endX, float endY) {
-        // TODO top left pixel is missing...!?
         renderer.setColor(0, 0, 0, .8f);
         for (int i = 0; i < b.getWidth() + 1; i++) {
             float loopX = startX + (tileSize * i);
-            renderer.rectLine(loopX, startY, loopX, endY, 1);
+            // add 1 to endY... otherwise top left pixel is missing
+            renderer.rectLine(loopX, startY, loopX, endY + 1, 1);
         }
         for (int i = 0; i < b.getHeight() + 1; i++) {
             float loopY = startY + (tileSize * i);

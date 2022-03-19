@@ -1,5 +1,6 @@
 package agvoron.tetris.desktop;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import agvoron.tetris.Tetris;
@@ -11,14 +12,15 @@ public class DesktopLauncher {
         // window
         config.resizable = false;
         config.title = "Tetris";
-//      config.addIcon(null, null); // TODO window icon
+        config.addIcon("logo_large.png", FileType.Internal);
+        config.addIcon("logo_med.png", FileType.Internal);
+        config.addIcon("logo_smol.png", FileType.Internal);
 
         // center
         config.x = -1;
         config.y = -1;
 
         // TODO graphics settings to make configurable
-        // TODO add a debug mode toggle (currently set up for testing)
         config.width = 1080;
         config.height = 720;
         config.backgroundFPS = 60;
