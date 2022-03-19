@@ -3,6 +3,7 @@ package agvoron.tetris;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Json;
@@ -43,6 +44,12 @@ public class Tetris extends Game {
         manager.load("purple.png", Texture.class);
         manager.load("red.png", Texture.class);
         manager.load("yellow.png", Texture.class);
+        manager.load("thunk1.mp3", Sound.class);
+        manager.load("thunk2.mp3", Sound.class);
+        manager.load("thunk3.mp3", Sound.class);
+        manager.load("whoosh1.mp3", Sound.class);
+        manager.load("whoosh2.mp3", Sound.class);
+        manager.load("whoosh3.mp3", Sound.class);
 
         // resources required for title are not managed by AssetManager
         ui_skin = new Skin(Gdx.files.internal("plain-james/plain-james-ui.json"));

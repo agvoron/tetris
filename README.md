@@ -6,8 +6,7 @@ I'd like to learn a bit more LibGDX as I go.
 
 ## Goals
 * Title Screen
-    * Asset loading bar
-    * See how-to-play instructions
+    * ~Asset loading bar~
     * ~Settings button~
     * ~Play button~
     * Looks nice
@@ -28,7 +27,7 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Show score~
     * ~See upcoming pieces nicely~
     * ~See held piece nicely~
-    * Draw squares using nice assets
+    * ~Draw squares using nice assets~
     * Snazzy particle visuals
         * Placing
         * Clearing
@@ -53,10 +52,13 @@ I'd like to learn a bit more LibGDX as I go.
     * Moving can delay landing (e.g. for T-spin)
 * Sound effects
     * Play music
-    * Place
-    * Clear
+    * ~Place~
+    * ~Clear~
+        * Combo clears
         * Special clears
     * Rotate
         * Special rotations
     * Danger
+    * Start
+    * Level up
     * Lose

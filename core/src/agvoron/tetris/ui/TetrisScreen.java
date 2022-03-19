@@ -2,6 +2,7 @@ package agvoron.tetris.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL30;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -363,13 +365,17 @@ public class TetrisScreen implements Screen {
      * final location of currPiece
      */
     private void helperPlacePiece() {
+        helperSoundRandomThunk().play();
+
         int[] tetromino = currPiece.getTetromino();
         for (int i = 0; i < tetromino.length; i += 2) {
             Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
             editSquare.color = currPiece.getColor();
             editSquare.occupied = true;
         }
-        board.clearLines();
+        if (board.clearLines() > 0) {
+            helperSoundRandomWhoosh().play();
+        }
         holdAvailable = true;
     }
 
@@ -427,6 +433,32 @@ public class TetrisScreen implements Screen {
                 break;
         }
         return piece;
+    }
+
+    private Sound helperSoundRandomThunk() {
+        switch (MathUtils.random(2)) {
+            case 0:
+                return Tetris.app.manager.get("thunk1.mp3", Sound.class);
+            case 1:
+                return Tetris.app.manager.get("thunk2.mp3", Sound.class);
+            case 2:
+                return Tetris.app.manager.get("thunk3.mp3", Sound.class);
+            default:
+                return null;
+        }
+    }
+
+    private Sound helperSoundRandomWhoosh() {
+        switch (MathUtils.random(2)) {
+            case 0:
+                return Tetris.app.manager.get("whoosh1.mp3", Sound.class);
+            case 1:
+                return Tetris.app.manager.get("whoosh2.mp3", Sound.class);
+            case 2:
+                return Tetris.app.manager.get("whoosh3.mp3", Sound.class);
+            default:
+                return null;
+        }
     }
 
 }
