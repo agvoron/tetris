@@ -18,8 +18,9 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Settings are persisted~
     * Looks nice
 * Tetris Screen
-    * Restart button
-    * Return to title button
+    * ~Restart button~
+    * ~Return to title button~
+    * Looks nice
 * Game graphics/UI
     * ~See the tetris board~
     * ~See pieces as they fall~

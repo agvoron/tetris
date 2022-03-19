@@ -98,8 +98,6 @@ public class TetrisScreen implements Screen {
         stageCam.setToOrtho(false);
         fps = new FPSLogger(59);
 
-        board = new Board();
-
         background = Tetris.app.manager.get("background.png", Texture.class);
         blue = Tetris.app.manager.get("blue.png", Texture.class);
         darkblue = Tetris.app.manager.get("darkblue.png", Texture.class);
@@ -108,6 +106,8 @@ public class TetrisScreen implements Screen {
         purple = Tetris.app.manager.get("purple.png", Texture.class);
         red = Tetris.app.manager.get("red.png", Texture.class);
         yellow = Tetris.app.manager.get("yellow.png", Texture.class);
+
+        setupInitGameState();
 
         // TODO if board too small, these go negative, fix that
         float tileSizeW = (Gdx.graphics.getWidth() - (2 * HOR_BOARD_PAD)) / (board.getWidth() + (2 * SIDE_PANEL_WIDTH));
@@ -130,9 +130,6 @@ public class TetrisScreen implements Screen {
             boardEndY = Gdx.graphics.getHeight() - VER_BOARD_PAD;
         }
 
-        heldPieceContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT);
-        upcomingPiecesContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN);
-
         // TODO make side panel padding configurable?
         float sidePanelPad = SIDE_PANEL_PAD;
         if (true) {
@@ -149,13 +146,6 @@ public class TetrisScreen implements Screen {
         upcomingContainerEndX = boardEndX + (tileSize * SIDE_PANEL_WIDTH) + sidePanelPad;
         upcomingContainerEndY = boardEndY;
 
-        currPiece = new Tetromino(board);
-        heldPiece = null;
-        upcomingPieces = new Tetromino[NUMBER_UPCOMING_SHOWN];
-        for (int i = 0; i < NUMBER_UPCOMING_SHOWN; i++) {
-            upcomingPieces[i] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
-        }
-
         infoTable = new Table();
         infoTable.setSkin(Tetris.ui_skin);
         infoTable.setFillParent(true);
@@ -166,7 +156,7 @@ public class TetrisScreen implements Screen {
         stage.addActor(infoTable);
 
         scoreText = new Label("Score: 0", Tetris.ui_skin);
-        pausedText = new Label("Game Over", Tetris.ui_skin);
+        pausedText = new Label("Paused.", Tetris.ui_skin);
         pausedText.setVisible(false);
         infoTable.add(scoreText).padLeft(5);
         infoTable.add(pausedText).padLeft(5);
@@ -179,6 +169,23 @@ public class TetrisScreen implements Screen {
         infoTable.add(backToTitle).padLeft(5);
 
         setupKeyControls();
+        setupButtonHandlers();
+    }
+
+    /**
+     * Initial game state variables
+     */
+    private void setupInitGameState() {
+        board = new Board();
+        heldPieceContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT);
+        upcomingPiecesContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN);
+
+        currPiece = new Tetromino(board);
+        heldPiece = null;
+        upcomingPieces = new Tetromino[NUMBER_UPCOMING_SHOWN];
+        for (int i = 0; i < NUMBER_UPCOMING_SHOWN; i++) {
+            upcomingPieces[i] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
+        }
 
         gravity = 0.5f;
         gravityTimer = 1f;
@@ -232,6 +239,36 @@ public class TetrisScreen implements Screen {
                 return super.keyUp(event, keycode);
             }
 
+        });
+    }
+
+    /**
+     * Set up listeners for pause menubuttons
+     */
+    public void setupButtonHandlers() {
+        restart.addListener(new InputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                helperResetGame();
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+        });
+
+        backToTitle.addListener(new InputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                helperResetGame();
+                Tetris.app.openTitle();
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
         });
     }
 
@@ -472,11 +509,32 @@ public class TetrisScreen implements Screen {
         return piece;
     }
 
-    private void helperEndGame() {
+    private void helperPauseGame() {
         gamePaused = true;
+        pausedText.setText("Paused.");
         pausedText.setVisible(true);
         restart.setVisible(true);
         backToTitle.setVisible(true);
+    }
+
+    private void helperResumeGame() {
+        gamePaused = false;
+        pausedText.setVisible(false);
+        restart.setVisible(false);
+        backToTitle.setVisible(false);
+    }
+
+    private void helperEndGame() {
+        gamePaused = true;
+        pausedText.setText("Game Over!");
+        pausedText.setVisible(true);
+        restart.setVisible(true);
+        backToTitle.setVisible(true);
+    }
+
+    private void helperResetGame() {
+        setupInitGameState();
+        helperResumeGame();
     }
 
     private Sound helperSoundRandomThunk() {
