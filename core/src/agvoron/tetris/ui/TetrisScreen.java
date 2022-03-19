@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -43,7 +44,9 @@ public class TetrisScreen implements Screen {
     private ShapeRenderer renderer; // TODO consider using Shape Drawer from LibGDX community
     private FPSLogger fps;
 
+    private Table infoTable;
     private Label scoreText;
+    private Label pausedText;
 
     private Board board;
     private Board heldPieceContainer;
@@ -73,6 +76,7 @@ public class TetrisScreen implements Screen {
     private float gravityTimer;
     private boolean softDropActive;
     private boolean holdAvailable;
+    private boolean gamePaused;
 
     private Texture background;
     private Texture blue;
@@ -149,8 +153,19 @@ public class TetrisScreen implements Screen {
             upcomingPieces[i] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
         }
 
+        infoTable = new Table();
+        infoTable.setSkin(Tetris.ui_skin);
+        infoTable.setFillParent(true);
+        infoTable.center();
+        infoTable.bottom();
+        infoTable.pad(5);
+        infoTable.debugAll();
+        stage.addActor(infoTable);
+
         scoreText = new Label("Score: 0", Tetris.ui_skin);
-        stage.addActor(scoreText);
+        pausedText = new Label("", Tetris.ui_skin);
+        infoTable.add(pausedText);
+        infoTable.add(scoreText);
 
         setupKeyControls();
 
@@ -159,6 +174,7 @@ public class TetrisScreen implements Screen {
         Score.reset();
         softDropActive = false;
         holdAvailable = true;
+        gamePaused = false;
     }
 
     /**
@@ -168,13 +184,16 @@ public class TetrisScreen implements Screen {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
+                if (gamePaused) {
+                    return super.keyDown(event, keycode);
+                }
+
                 if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[0])) {
                     int fallDistance = 0;
                     while (!currPiece.fall()) {
                         fallDistance++;
                     }
                     helperPlacePiece();
-                    helperGrabUpcoming();
                     Score.hardDrop(fallDistance);
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[1])) {
                     softDropActive = true;
@@ -253,19 +272,20 @@ public class TetrisScreen implements Screen {
         stage.draw();
 
         // game loop update
-        gravityTimer += (softDropActive ? delta * 4 : delta);
-        if (gravityTimer > gravity) {
-            gravityTimer = 0;
-            if (currPiece.fall()) {
-                helperPlacePiece();
-                helperGrabUpcoming();
+        if (!gamePaused) {
+            gravityTimer += (softDropActive ? delta * 4 : delta);
+            if (gravityTimer > gravity) {
+                gravityTimer = 0;
+                if (currPiece.fall()) {
+                    helperPlacePiece();
+                }
+                if (softDropActive) {
+                    Score.trickleSoftDrop();
+                }
             }
-            if (softDropActive) {
-                Score.trickleSoftDrop();
-            }
-        }
 
-        scoreText.setText("Score: " + Score.getScore());
+            scoreText.setText("Score: " + Score.getScore());
+        }
 
         fps.log();
     }
@@ -369,6 +389,11 @@ public class TetrisScreen implements Screen {
 
         int[] tetromino = currPiece.getTetromino();
         for (int i = 0; i < tetromino.length; i += 2) {
+            if (tetromino[i + 1] >= board.getHeight()) {
+                // topped out
+                helperEndGame();
+                return;
+            }
             Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
             editSquare.color = currPiece.getColor();
             editSquare.occupied = true;
@@ -377,6 +402,7 @@ public class TetrisScreen implements Screen {
             helperSoundRandomWhoosh().play();
         }
         holdAvailable = true;
+        helperGrabUpcoming();
     }
 
     private boolean helperHoldPiece() {
@@ -433,6 +459,11 @@ public class TetrisScreen implements Screen {
                 break;
         }
         return piece;
+    }
+
+    private void helperEndGame() {
+        gamePaused = true;
+        pausedText.setText("Game over!   ");
     }
 
     private Sound helperSoundRandomThunk() {
