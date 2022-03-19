@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Json;
 public class Settings {
 
     public static final String[] KEY_NAMES = { "Hard Drop", "Soft Drop", "Right", "Left", "Spin CW", "Spin CCW", "Hold",
-            "Flip" };
+            "Flip", "Pause" };
 
     public HashMap<String, Integer> keys;
 
@@ -25,6 +25,7 @@ public class Settings {
         keys.put(KEY_NAMES[5], Input.Keys.Z);
         keys.put(KEY_NAMES[6], Input.Keys.C);
         keys.put(KEY_NAMES[7], Input.Keys.A);
+        keys.put(KEY_NAMES[8], Input.Keys.ESCAPE);
     }
 
     public void save(FileHandle file) {

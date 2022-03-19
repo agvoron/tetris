@@ -202,8 +202,17 @@ public class TetrisScreen implements Screen {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[8])) {
+                    if (gamePaused) {
+                        helperResumeGame();
+                    } else {
+                        helperPauseGame();
+                    }
+                }
+
                 if (gamePaused) {
                     return super.keyDown(event, keycode);
+
                 }
 
                 if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[0])) {

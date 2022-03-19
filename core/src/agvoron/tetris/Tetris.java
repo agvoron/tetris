@@ -54,7 +54,8 @@ public class Tetris extends Game {
         // resources required for title are not managed by AssetManager
         ui_skin = new Skin(Gdx.files.internal("plain-james/plain-james-ui.json"));
         try {
-            // TODO using built-in serializer; learn about customizing it, and validation
+            // TODO using built-in serializer; learn about customizing it, and validation -
+            // e.g. missing key in config file
             settings = new Json().fromJson(Settings.class, Gdx.files.local(SETTINGS_FILENAME));
         } catch (SerializationException e) {
             settings = new Settings();

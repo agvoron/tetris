@@ -20,6 +20,7 @@ I'd like to learn a bit more LibGDX as I go.
 * Tetris Screen
     * ~Restart button~
     * ~Return to title button~
+    * ~View pause menu when paused~
     * Looks nice
 * Game graphics/UI
     * ~See the tetris board~
@@ -51,6 +52,7 @@ I'd like to learn a bit more LibGDX as I go.
     * Keys repeat if held
     * Rotations will move the piece aside if needed
     * Moving can delay landing (e.g. for T-spin)
+    * ~Pause the game~
 * Sound effects
     * Play music
     * ~Place~

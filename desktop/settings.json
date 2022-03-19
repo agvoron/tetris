@@ -1,6 +1,7 @@
 {
 keys: {
 	Left: 21
+	Pause: 111
 	Soft Drop: 20
 	Right: 22
 	Hard Drop: 62
