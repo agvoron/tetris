@@ -4,8 +4,9 @@ import com.badlogic.gdx.utils.Array;
 
 public class Board {
 
-    // default dimensions in number of tiles
+    /** Default width in number of tiles */
     private static final int BOARD_WIDTH = 10;
+    /** Default height in number of tiles */
     private static final int BOARD_HEIGHT = 20;
 
     private Array<Array<Square>> board;
@@ -42,6 +43,11 @@ public class Board {
         return board.get(y).get(x);
     }
 
+    /**
+     * Clear lines in board, give score and track combo on static score class as a side effect.
+     * 
+     * @return the number of lines cleared
+     */
     public int clearLines() {
         int linesCleared = 0;
         for (int i = board.size - 1; i >= 0; i--) {

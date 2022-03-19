@@ -20,6 +20,7 @@ public class TitleScreen implements Screen {
     private Label loading;
     private TextButton play;
     private TextButton settings;
+
     private boolean isLoading;
 
     public TitleScreen() {
@@ -81,7 +82,7 @@ public class TitleScreen implements Screen {
     public void render(float delta) {
         if (isLoading) {
             if (Tetris.app.manager.update()) {
-                loading.setText("Done!");
+                loading.setText("");
                 play.setDisabled(false);
                 settings.setDisabled(false);
                 isLoading = false;

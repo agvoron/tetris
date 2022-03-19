@@ -28,7 +28,7 @@ public class Tetris extends Game {
     private static TetrisScreen tetrisScreen;
     private static SettingsScreen settingsScreen;
 
-    public AssetManager manager;
+    public AssetManager manager; // non-static; apparently causes subtle bugs on android
 
     @Override
     public void create() {
@@ -51,7 +51,7 @@ public class Tetris extends Game {
         manager.load("whoosh2.mp3", Sound.class);
         manager.load("whoosh3.mp3", Sound.class);
 
-        // resources required for title are not managed by AssetManager
+        // resources required for title screen are not managed by AssetManager
         ui_skin = new Skin(Gdx.files.internal("plain-james/plain-james-ui.json"));
         try {
             // TODO using built-in serializer; learn about customizing it, and validation

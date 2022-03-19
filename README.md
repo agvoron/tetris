@@ -15,6 +15,7 @@ I'd like to learn a bit more LibGDX as I go.
     * Configure handling (basic)
     * Configure graphics
     * Configure sound
+    * Configure gameplay (board size)
     * ~Settings are persisted~
     * Looks nice
 * Tetris Screen

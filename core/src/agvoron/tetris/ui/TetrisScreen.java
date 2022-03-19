@@ -360,6 +360,8 @@ public class TetrisScreen implements Screen {
         }
     }
 
+    // TODO might be fun to allow graphics config - plain colors or textures
+
     /**
      * Helper to draw board background, must be called in between batch.begin() and
      * end()
@@ -432,7 +434,8 @@ public class TetrisScreen implements Screen {
 
     /**
      * Run this after currPiece.fall() returns true, to update the board with the
-     * final location of currPiece
+     * final location of currPiece, check for top-out, and reset state for a new
+     * tetromino if all is well
      */
     private void helperPlacePiece() {
         helperSoundRandomThunk().play();
@@ -452,9 +455,11 @@ public class TetrisScreen implements Screen {
             helperSoundRandomWhoosh().play();
         }
         holdAvailable = true;
+
         helperGrabUpcoming();
     }
 
+    /** Send the current piece to the held piece side panel */
     private boolean helperHoldPiece() {
         if (!holdAvailable) {
             return true;
@@ -470,6 +475,7 @@ public class TetrisScreen implements Screen {
         return false;
     }
 
+    /** Helper to take a tetromino from the top of the upcoming pieces list */
     private void helperGrabUpcoming() {
         currPiece = new Tetromino(board, upcomingPieces[0].getShape());
         for (int i = 0; i < upcomingPieces.length - 1; i++) {

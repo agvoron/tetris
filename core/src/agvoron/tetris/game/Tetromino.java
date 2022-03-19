@@ -10,10 +10,11 @@ public class Tetromino {
     private Shape shape;
     private Rotation rotation;
 
-    // root points to bottom left corner of shape
+    /** Bottom left corner of shape in board coordinates */
     private int rootX;
+    /** Bottom left corner of shape in board coordinates */
     private int rootY;
-    // board coordinates of each square
+    /** Board coordinates of each square */
     private int[] tetromino;
 
     public static final Color LIGHT_BLUE = new Color(0.3f, 1f, 1f, 1f);
@@ -43,6 +44,7 @@ public class Tetromino {
             return shapeColor;
         }
 
+        /** The x position on the board to properly center this shape. */
         public int getStartingX(int boardWidth) {
             return boardWidth / 2 - 1;
         }
@@ -74,12 +76,13 @@ public class Tetromino {
         }
     }
 
+    /** Spawn tetromino with random shape */
     public Tetromino(Board board) {
         this.board = board;
         spawnRandom();
     }
 
-    // force spawning with specific shape
+    /** Spawn tetromino with given shape */
     public Tetromino(Board board, Shape shape) {
         this.board = board;
         spawnAsShape(shape);
@@ -105,10 +108,12 @@ public class Tetromino {
         return shape.getColor();
     }
 
+    /** @return board coordinates of this tetromino as {x1, y1, x2, y2, ... } */
     public int[] getTetromino() {
         return tetromino;
     }
 
+    /** @return true if the translation would go out-of-bounds */
     public boolean translateRight() {
         rootX += 1;
         refreshCoordinates();
@@ -120,6 +125,7 @@ public class Tetromino {
         return false;
     }
 
+    /** @return true if the translation would go out-of-bounds */
     public boolean translateLeft() {
         rootX -= 1;
         refreshCoordinates();
@@ -131,6 +137,7 @@ public class Tetromino {
         return false;
     }
 
+    /** @return true if the translation would go out-of-bounds */
     public boolean translateUp() {
         rootY += 1;
         refreshCoordinates();
@@ -142,6 +149,7 @@ public class Tetromino {
         return false;
     }
 
+    /** @return true if the rotation would go out-of-bounds */
     public boolean setRotation(Rotation r) {
         Rotation saved = rotation;
         rotation = r;
@@ -154,6 +162,7 @@ public class Tetromino {
         return false;
     }
 
+    /** @return true if the rotation would go out-of-bounds */
     public boolean rotateRight() {
         rotation = rotation.right();
         refreshCoordinates();
@@ -165,6 +174,7 @@ public class Tetromino {
         return false;
     }
 
+    /** @return true if the rotation would go out-of-bounds */
     public boolean rotateLeft() {
         rotation = rotation.left();
         refreshCoordinates();
@@ -176,6 +186,7 @@ public class Tetromino {
         return false;
     }
 
+    /** @return true if the rotation would go out-of-bounds */
     public boolean rotateFlip() {
         rotation = rotation.left();
         rotation = rotation.left();
@@ -189,6 +200,7 @@ public class Tetromino {
         return false;
     }
 
+    /** @return true if the translation would go out-of-bounds */
     public boolean fall() {
         rootY -= 1;
         refreshCoordinates();
