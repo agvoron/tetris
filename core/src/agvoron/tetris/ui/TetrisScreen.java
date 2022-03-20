@@ -81,7 +81,8 @@ public class TetrisScreen implements Screen {
     private float gravityTimer;
     private boolean softDropActive;
     private boolean holdAvailable;
-    private boolean gamePaused;
+    private boolean isGamePaused;
+    private boolean isLost;
 
     private Texture background;
     private Texture blue;
@@ -192,7 +193,8 @@ public class TetrisScreen implements Screen {
         Score.reset();
         softDropActive = false;
         holdAvailable = true;
-        gamePaused = false;
+        isGamePaused = false;
+        isLost = false;
     }
 
     /**
@@ -202,17 +204,20 @@ public class TetrisScreen implements Screen {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
+                if (isLost) {
+                    return super.keyDown(event, keycode);
+                }
+
                 if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[8])) {
-                    if (gamePaused) {
+                    if (isGamePaused) {
                         helperResumeGame();
                     } else {
                         helperPauseGame();
                     }
                 }
 
-                if (gamePaused) {
+                if (isGamePaused) {
                     return super.keyDown(event, keycode);
-
                 }
 
                 if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[0])) {
@@ -322,7 +327,7 @@ public class TetrisScreen implements Screen {
         stage.draw();
 
         // game loop update
-        if (!gamePaused) {
+        if (!isGamePaused) {
             gravityTimer += (softDropActive ? delta * 4 : delta);
             if (gravityTimer > gravity) {
                 gravityTimer = 0;
@@ -518,7 +523,7 @@ public class TetrisScreen implements Screen {
     }
 
     private void helperPauseGame() {
-        gamePaused = true;
+        isGamePaused = true;
         pausedText.setText("Paused.");
         pausedText.setVisible(true);
         restart.setVisible(true);
@@ -526,14 +531,17 @@ public class TetrisScreen implements Screen {
     }
 
     private void helperResumeGame() {
-        gamePaused = false;
+        if (isLost)
+            return;
+        isGamePaused = false;
         pausedText.setVisible(false);
         restart.setVisible(false);
         backToTitle.setVisible(false);
     }
 
     private void helperEndGame() {
-        gamePaused = true;
+        isGamePaused = true;
+        isLost = true;
         pausedText.setText("Game Over!");
         pausedText.setVisible(true);
         restart.setVisible(true);
