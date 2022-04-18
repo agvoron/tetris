@@ -8,6 +8,8 @@
 
 * Implement unit testing (no need to be thorough, just to refresh on how to do JUnit in Eclipse)
 
+* Bug/tweak: reset the gravity delay after placing
+
 # === Implementation Notes ===
 
 
