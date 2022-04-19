@@ -6,7 +6,7 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 sourceSets.main.resources.srcDirs = ["../assets"]
 
 // jpackage guide - delete leading "project.ext."
-mainClassName = "agvoron.tetrisclean.DesktopLauncher"
+mainClassName = "agvoron.tetris.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../assets")
 
 import org.gradle.internal.os.OperatingSystem
