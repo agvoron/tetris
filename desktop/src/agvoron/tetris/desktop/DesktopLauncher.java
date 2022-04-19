@@ -1,36 +1,34 @@
 package agvoron.tetris.desktop;
 
-import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+
 import agvoron.tetris.Tetris;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-
+        // TODO review LWJGL3 config options - for now ported from LWJGL2
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        
         // window
-        config.resizable = false;
-        config.title = "Tetris";
-        config.addIcon("logo_large.png", FileType.Internal);
-        config.addIcon("logo_med.png", FileType.Internal);
-        config.addIcon("logo_smol.png", FileType.Internal);
+        config.setResizable(false);
+        config.setTitle("Tetris");
+        config.setWindowIcon("logo_large.png", "logo_med.png", "logo_smol.png");
 
         // center
-        config.x = -1;
-        config.y = -1;
+        config.setWindowPosition(-1, -1);
 
         // TODO graphics settings to make configurable
-        config.width = 1080;
-        config.height = 720;
-        config.backgroundFPS = 60;
-        config.foregroundFPS = 60;
-        config.fullscreen = false;
-        config.undecorated = false;
+        config.setWindowedMode(1080, 720);
+        config.setForegroundFPS(60);
+        // config.setFullscreenMode(null); // TODO unsure how to set fullscreen off/on
+        // config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+
+        config.setDecorated(true);
 //      config.samples = 0;
 //      config.vSyncEnabled = true;
-        config.pauseWhenMinimized = true;
+//        config.pauseWhenMinimized = true; // TODO option removed
 
-        new LwjglApplication(new Tetris(), config);
+        new Lwjgl3Application(new Tetris(), config);
     }
 }
