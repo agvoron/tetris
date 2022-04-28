@@ -13,7 +13,7 @@ public class DesktopLauncher {
         // window
         config.setResizable(false);
         config.setTitle("Tetris");
-        config.setWindowIcon("logo_large.png", "logo_med.png", "logo_smol.png");
+        config.setWindowIcon("logo_128.png", "logo_32.png", "logo_16.png");
 
         // center
         config.setWindowPosition(-1, -1);

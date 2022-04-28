@@ -72,8 +72,46 @@ runtime {
     jpackage {
         jpackageHome = 'C:/Program Files/Eclipse Adoptium/jdk-17.0.2.8-hotspot'
         mainJar = dist.archiveFileName.get()
-        // TODO jpackage somehow breaks when using this option, try alternatives
-        //imageOptions = ["--icon", file("../icons/icon.ico")] // only for windows
+        
+        imageOptions = ["--icon", file("../assets/icon.ico")] // only for windows
     }
 
+}
+
+// customizing further
+task tetrisBundle(dependsOn: jpackageImage, type: Exec) {
+  group = 'tetris custom'
+  description = 'Edit Windows executable resources'
+  workingDir = '../desktop/build/jpackage/desktop/'
+  
+  String tetrisFilename = allprojects.ext.appName.toString().substring(1, allprojects.ext.appName.toString().length()-1)
+  String tetrisVersion = allprojects.version.toString().substring(1, allprojects.version.toString().length()-1)
+  
+  // remove and reset read-only attribute to use rcedit
+  String tetrisBundleCommand = ('attrib -r "desktop.exe" &'
+    + ' ren "desktop.exe" "' + tetrisFilename + '.exe" &'
+    + ' ren ".\\app\\desktop.cfg" "' + tetrisFilename + '.cfg" &'
+    + ' rcedit "' + tetrisFilename + '.exe"'
+    + ' --set-file-version "' + tetrisVersion + '"'
+    + ' --set-product-version "' + tetrisVersion + '"'
+    + ' --set-version-string "OriginalFilename" "' + tetrisFilename + '.exe"'
+    + ' --set-version-string "ProductName" "' + tetrisFilename + '"'
+    + ' --set-version-string "FileDescription" "This is my Tetris demo for learning LibGDX!"'
+    + ' --set-version-string "LegalCopyright" "Copyright - Test"'
+    + ' --set-version-string "Comments" "This is my Tetris demo for learning LibGDX!"'
+    //+ ' --set-icon ../../../../assets/icon.ico'
+    + ' & attrib +r "' + tetrisFilename + '.exe"')
+  
+  //println tetrisBundleCommand
+
+  commandLine 'cmd', '/c', tetrisBundleCommand
+
+}
+
+task convertIcon(type: Exec) {
+  group = 'tetris custom'
+  description = 'Convert .png files to .ico bundle for logo'
+  workingDir = '../assets'
+
+  commandLine 'cmd', '/c', 'convert logo_16.png logo_32.png logo_48.png logo_128.png logo_256.png -colors 256 -dither None icon.ico'
 }

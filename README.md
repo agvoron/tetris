@@ -9,13 +9,17 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Asset loading bar~
     * ~Settings button~
     * ~Play button~
+    * Quit button
     * Looks nice
 * Settings Screen
     * ~Configure key binds~
     * Configure handling (basic)
     * Configure graphics
     * Configure sound
-    * Configure gameplay (board size)
+    * Configure gameplay
+        * Board size
+        * Toggle features (holding, ghost piece)
+        * Leveling up/difficulty
     * ~Settings are persisted~
     * Looks nice
 * Tetris Screen
