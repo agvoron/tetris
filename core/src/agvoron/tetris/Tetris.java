@@ -37,6 +37,7 @@ public class Tetris extends Game {
         // prep to load resources
         manager = new AssetManager();
         manager.load("background.png", Texture.class);
+        manager.load("black.png", Texture.class);
         manager.load("blue.png", Texture.class);
         manager.load("darkblue.png", Texture.class);
         manager.load("green.png", Texture.class);
