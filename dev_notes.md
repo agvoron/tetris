@@ -1,5 +1,4 @@
 # === Tasks ===
-* Bug/tweak: reset the gravity delay after placing
 * Bug/tweak: prevent accidental double-taps on spacebar
 * Bug/tweak: add back button to pause menu
 
