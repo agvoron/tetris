@@ -70,3 +70,6 @@ I'd like to learn a bit more LibGDX as I go.
     * Start
     * Level up
     * Lose
+* Learning
+    * Try Github release automation
+
