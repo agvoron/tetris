@@ -1,13 +1,16 @@
 # === Tasks ===
-* Bug/tweak: prevent accidental double-taps on spacebar
-* Bug/tweak: add back button to pause menu
-
-* Finish gameplay
-    * Level up
-
 * Implement unit testing (no need to be thorough, just to refresh on how to do JUnit in Eclipse)
 
+* Bug/tweak: prevent accidental double-taps on spacebar
+* Bug/tweak: add back button to pause menu & clean up pause menu
+
+* Finish gameplay
+    * Level up and increase gravity
+
 * Sign the executable
+
+* Title screen quit button
+* Title screen cleanup/looks nice
 
 # === Implementation Notes ===
 
