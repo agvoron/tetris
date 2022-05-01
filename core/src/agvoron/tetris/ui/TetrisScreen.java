@@ -195,7 +195,7 @@ public class TetrisScreen implements Screen {
         }
 
         gravity = 0.5f;
-        gravityTimer = 1f;
+        gravityTimer = -1f;
         Score.reset();
         softDropActive = false;
         holdAvailable = true;
@@ -482,6 +482,7 @@ public class TetrisScreen implements Screen {
         if (board.clearLines() > 0) {
             helperSoundRandomWhoosh().play();
         }
+        gravityTimer = 0;
         holdAvailable = true;
 
         helperGrabUpcoming();
