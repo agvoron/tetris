@@ -41,7 +41,7 @@ I'd like to learn a bit more LibGDX as I go.
         * In danger
         * Combo
     * ~Looks nice~
-    * Ghost piece
+    * ~Ghost piece~
 * Gameplay
     * ~Random pieces appear and fall~
     * ~Translating~

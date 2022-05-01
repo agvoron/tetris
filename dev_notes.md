@@ -2,8 +2,6 @@
 * Bug/tweak: prevent accidental double-taps on spacebar
 * Bug/tweak: add back button to pause menu
 
-* Ghost piece
-
 * Finish gameplay
     * Level up
 
