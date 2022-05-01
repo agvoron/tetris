@@ -1,7 +1,9 @@
 # === Tasks ===
-* Release version 1.0
+* Release version 1.0.0
 * Implement a git branching policy
 * Git release automation
+
+* Ghost piece
 
 * Finish gameplay
     * Level up
