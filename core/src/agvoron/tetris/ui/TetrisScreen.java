@@ -270,7 +270,7 @@ public class TetrisScreen implements Screen {
     /**
      * Set up listeners for pause menubuttons
      */
-    public void setupButtonHandlers() {
+    private void setupButtonHandlers() {
         restart.addListener(new ChangeListener() {
 
             @Override
