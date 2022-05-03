@@ -24,3 +24,10 @@ Patch Notes format
 * Features
 * Enhancements
 * Bugfixes
+
+Release process
+* Create feature branch
+* Run test suite
+* Bundle distributable
+* Verify changelog list
+* Playtest
