@@ -84,7 +84,7 @@ public class TitleScreen implements Screen {
         table.center();
         table.top();
         table.pad(70);
-        for (Cell c : table.getCells()) {
+        for (@SuppressWarnings("rawtypes") Cell c : table.getCells()) {
             c.pad(5);
         }
 //        table.debugAll();
