@@ -80,6 +80,8 @@ public class TetrisScreen implements Screen {
 
     private float gravity;
     private float gravityTimer;
+    private float hardDropRepeatDelay;
+    private float hardDropTimer;
     private boolean softDropActive;
     private boolean holdAvailable;
     private boolean isGamePaused;
@@ -196,6 +198,8 @@ public class TetrisScreen implements Screen {
 
         gravity = 0.5f;
         gravityTimer = -1f;
+        hardDropRepeatDelay = 0.12f;
+        hardDropTimer = 0f;
         Score.reset();
         softDropActive = false;
         holdAvailable = true;
@@ -227,6 +231,10 @@ public class TetrisScreen implements Screen {
                 }
 
                 if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[0])) {
+                    if (hardDropTimer < hardDropRepeatDelay) {
+                        // too soon after placing - stop accidental hard drop
+                        return super.keyDown(event, keycode);
+                    }
                     int fallDistance = 0;
                     while (!currPiece.fall()) {
                         fallDistance++;
@@ -343,6 +351,7 @@ public class TetrisScreen implements Screen {
         // game loop update
         if (!isGamePaused) {
             gravityTimer += (softDropActive ? delta * 4 : delta);
+            hardDropTimer += delta;
             if (gravityTimer > gravity) {
                 gravityTimer = 0;
                 if (currPiece.fall()) {
@@ -483,6 +492,7 @@ public class TetrisScreen implements Screen {
             helperSoundRandomWhoosh().play();
         }
         gravityTimer = 0;
+        hardDropTimer = 0;
         holdAvailable = true;
 
         helperGrabUpcoming();

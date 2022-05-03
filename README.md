@@ -59,6 +59,8 @@ I'd like to learn a bit more LibGDX as I go.
     * Moving can delay landing (e.g. for T-spin)
         * Special clears
     * ~Pause the game~
+    * R to restart feature
+    * Pause on focus loss
 * Sound effects
     * Play music
     * ~Place~
@@ -71,6 +73,3 @@ I'd like to learn a bit more LibGDX as I go.
     * Start
     * Level up
     * Lose
-* Learning
-    * Try Github release automation
-

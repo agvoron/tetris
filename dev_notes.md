@@ -1,7 +1,4 @@
 # === Tasks ===
-* Implement unit testing (no need to be thorough, just to refresh on how to do JUnit in Eclipse)
-
-* Bug/tweak: prevent accidental double-taps on spacebar
 * Bug/tweak: add back button to pause menu & clean up pause menu
 
 * Finish gameplay
@@ -20,3 +17,8 @@ Git Branching
 * feature/#### - branch from dev, name after a task number
 * release/#.# - branch from dev when features ready, name after major version
 * hotfix/#### - branch from master, name after a Github issue, increment minor version
+
+Patch Notes format
+* Features
+* Enhancements
+* Bugfixes
