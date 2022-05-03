@@ -6,9 +6,6 @@
 
 * Sign the executable
 
-* Title screen quit button
-* Title screen cleanup/looks nice
-
 # === Implementation Notes ===
 
 Git Branching

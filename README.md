@@ -5,12 +5,12 @@ With this project, I don't need to design anything, so the creative element is r
 I'd like to learn a bit more LibGDX as I go.
 
 ## Goals
-* Title Screen
+* ~Title Screen~
     * ~Asset loading bar~
     * ~Settings button~
     * ~Play button~
-    * Quit button
-    * Looks nice
+    * ~Quit button~
+    * ~Looks nice~
 * Settings Screen
     * ~Configure key binds~
     * Configure handling (basic)
