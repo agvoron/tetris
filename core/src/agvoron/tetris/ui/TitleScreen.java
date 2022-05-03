@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -20,6 +21,7 @@ public class TitleScreen implements Screen {
     private Label loading;
     private TextButton play;
     private TextButton settings;
+    private TextButton quit;
 
     private boolean isLoading;
 
@@ -46,6 +48,7 @@ public class TitleScreen implements Screen {
                 Tetris.app.openTetris();
             }
         });
+        play.pad(5);
         table.add(play);
         play.setDisabled(true);
 
@@ -59,14 +62,31 @@ public class TitleScreen implements Screen {
                 Tetris.app.openSettings();
             }
         });
+        settings.pad(5);
         table.add(settings);
         settings.setDisabled(true);
+
+        table.row();
+
+        quit = new TextButton("Quit", Tetris.ui_skin);
+        quit.addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+            }
+        });
+        quit.pad(5);
+        table.add(quit);
 
         table.setSkin(Tetris.ui_skin);
         table.setFillParent(true);
         table.center();
         table.top();
         table.pad(70);
+        for (@SuppressWarnings("rawtypes") Cell c : table.getCells()) {
+            c.pad(5);
+        }
 //        table.debugAll();
         stage.addActor(table);
 

@@ -48,8 +48,10 @@ public class TetrisScreen implements Screen {
     private FPSLogger fps;
 
     private Table infoTable;
+    private Label levelText;
     private Label scoreText;
     private Label pausedText;
+    private TextButton resume;
     private TextButton restart;
     private TextButton backToTitle;
 
@@ -60,6 +62,7 @@ public class TetrisScreen implements Screen {
     private Tetromino currPiece;
     private Tetromino heldPiece;
     private Tetromino[] upcomingPieces;
+    private Tetromino ghostPiece;
 
     private float tileSize;
     private float boardStartX;
@@ -79,12 +82,19 @@ public class TetrisScreen implements Screen {
 
     private float gravity;
     private float gravityTimer;
+    private float hardDropRepeatDelay;
+    private float hardDropTimer;
+    private float levelScalar;
+    private int level;
+    private int placedCount;
+    private int placedCountForLevelup;
     private boolean softDropActive;
     private boolean holdAvailable;
     private boolean isGamePaused;
     private boolean isLost;
 
     private Texture background;
+    private Texture black;
     private Texture blue;
     private Texture darkblue;
     private Texture green;
@@ -96,12 +106,14 @@ public class TetrisScreen implements Screen {
     public TetrisScreen() {
         stage = new Stage(new ScreenViewport());
         batch = new SpriteBatch();
+        batch.enableBlending();
         renderer = new ShapeRenderer();
         stageCam = (OrthographicCamera) stage.getViewport().getCamera();
         stageCam.setToOrtho(false);
         fps = new FPSLogger(59);
 
         background = Tetris.app.manager.get("background.png", Texture.class);
+        black = Tetris.app.manager.get("black.png", Texture.class);
         blue = Tetris.app.manager.get("blue.png", Texture.class);
         darkblue = Tetris.app.manager.get("darkblue.png", Texture.class);
         green = Tetris.app.manager.get("green.png", Texture.class);
@@ -156,16 +168,21 @@ public class TetrisScreen implements Screen {
 //        infoTable.debugAll();
         stage.addActor(infoTable);
 
+        levelText = new Label("Level: 1", Tetris.ui_skin);
         scoreText = new Label("Score: 0", Tetris.ui_skin);
         pausedText = new Label("Paused.", Tetris.ui_skin);
         pausedText.setVisible(false);
-        infoTable.add(scoreText).padLeft(5);
-        infoTable.add(pausedText).padLeft(5);
+        infoTable.add(levelText).padLeft(5);
+        infoTable.add(scoreText).padLeft(15);
+        infoTable.add(pausedText).padLeft(15);
 
+        resume = new TextButton("Resume", Tetris.ui_skin);
         restart = new TextButton("Restart", Tetris.ui_skin);
         backToTitle = new TextButton("Back to Title", Tetris.ui_skin);
+        resume.setVisible(false);
         restart.setVisible(false);
         backToTitle.setVisible(false);
+        infoTable.add(resume).padLeft(5);
         infoTable.add(restart).padLeft(5);
         infoTable.add(backToTitle).padLeft(5);
 
@@ -182,6 +199,8 @@ public class TetrisScreen implements Screen {
         upcomingPiecesContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN);
 
         currPiece = new Tetromino(board);
+        ghostPiece = new Tetromino(board, currPiece.getShape());
+        helperPositionGhostPiece(ghostPiece);
         heldPiece = null;
         upcomingPieces = new Tetromino[NUMBER_UPCOMING_SHOWN];
         for (int i = 0; i < NUMBER_UPCOMING_SHOWN; i++) {
@@ -190,6 +209,12 @@ public class TetrisScreen implements Screen {
 
         gravity = 0.5f;
         gravityTimer = -1f;
+        hardDropRepeatDelay = 0.12f;
+        hardDropTimer = 0f;
+        levelScalar = 1.2f;
+        level = 1;
+        placedCount = 0;
+        placedCountForLevelup = 20;
         Score.reset();
         softDropActive = false;
         holdAvailable = true;
@@ -221,6 +246,10 @@ public class TetrisScreen implements Screen {
                 }
 
                 if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[0])) {
+                    if (hardDropTimer < hardDropRepeatDelay) {
+                        // too soon after placing - stop accidental hard drop
+                        return super.keyDown(event, keycode);
+                    }
                     int fallDistance = 0;
                     while (!currPiece.fall()) {
                         fallDistance++;
@@ -231,16 +260,21 @@ public class TetrisScreen implements Screen {
                     softDropActive = true;
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[2])) {
                     currPiece.translateRight();
+                    helperPositionGhostPiece(ghostPiece);
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[3])) {
                     currPiece.translateLeft();
+                    helperPositionGhostPiece(ghostPiece);
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[4])) {
                     currPiece.rotateRight();
+                    helperPositionGhostPiece(ghostPiece);
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[5])) {
                     currPiece.rotateLeft();
+                    helperPositionGhostPiece(ghostPiece);
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[6])) {
                     helperHoldPiece();
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[7])) {
                     currPiece.rotateFlip();
+                    helperPositionGhostPiece(ghostPiece);
                 }
                 return super.keyDown(event, keycode);
             }
@@ -259,7 +293,15 @@ public class TetrisScreen implements Screen {
     /**
      * Set up listeners for pause menubuttons
      */
-    public void setupButtonHandlers() {
+    private void setupButtonHandlers() {
+        resume.addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                helperResumeGame();
+            }
+        });
+
         restart.addListener(new ChangeListener() {
 
             @Override
@@ -297,15 +339,18 @@ public class TetrisScreen implements Screen {
         helperRenderBoard(heldPieceContainer, heldContainerStartX, heldContainerStartY);
         helperRenderBoard(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY);
 
+        // draw ghost piece tetromino
+        helperRenderTetromino(ghostPiece, boardStartX, boardStartY, true);
+
         // draw tetromino textures for each
-        helperRenderTetromino(currPiece, boardStartX, boardStartY);
+        helperRenderTetromino(currPiece, boardStartX, boardStartY, false);
         if (heldPiece != null) {
-            helperRenderTetromino(heldPiece, heldContainerStartX,
-                    heldContainerStartY - (PANEL_PIECE_HEIGHT * tileSize));
+            helperRenderTetromino(heldPiece, heldContainerStartX, heldContainerStartY - (PANEL_PIECE_HEIGHT * tileSize),
+                    false);
         }
         for (int i = 0; i < upcomingPieces.length; i++) {
             helperRenderTetromino(upcomingPieces[i], upcomingContainerStartX,
-                    upcomingContainerStartY - (PANEL_PIECE_HEIGHT * tileSize * (i + 1)));
+                    upcomingContainerStartY - (PANEL_PIECE_HEIGHT * tileSize * (i + 1)), false);
         }
 
         batch.end();
@@ -328,7 +373,8 @@ public class TetrisScreen implements Screen {
 
         // game loop update
         if (!isGamePaused) {
-            gravityTimer += (softDropActive ? delta * 4 : delta);
+            gravityTimer += (softDropActive ? delta * 4 : delta) * Math.pow(levelScalar, level - 1);
+            hardDropTimer += delta;
             while (gravityTimer > gravity) {
                 gravityTimer -= gravity;
                 if (currPiece.fall()) {
@@ -340,12 +386,16 @@ public class TetrisScreen implements Screen {
             }
 
             scoreText.setText("Score: " + Score.getScore());
+            levelText.setText("Level: " + level);
         }
 
         fps.log();
     }
 
-    private Texture helperSelectTexture(Color color) {
+    private Texture helperSelectTexture(Color color, boolean isGhost) {
+        if (isGhost) {
+            return black;
+        }
         if (color == Tetromino.BLUE) {
             return darkblue;
         } else if (color == Tetromino.GREEN) {
@@ -378,20 +428,26 @@ public class TetrisScreen implements Screen {
                 float loopY = startY + (tileSize * j);
 //                renderer.setColor(b.getSquare(i, j).color);
 //                renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
-                batch.draw(helperSelectTexture(b.getSquare(i, j).color), loopX, loopY, tileSize, tileSize);
+                batch.draw(helperSelectTexture(b.getSquare(i, j).color, false), loopX, loopY, tileSize, tileSize);
             }
         }
     }
 
     /** Helper to draw tetrominoes, call between batch.begin() and end() */
-    private void helperRenderTetromino(Tetromino piece, float startX, float startY) {
+    private void helperRenderTetromino(Tetromino piece, float startX, float startY, boolean isGhost) {
         int[] tetromino = piece.getTetromino();
 //        renderer.setColor(piece.getColor());
         for (int i = 0; i < tetromino.length; i += 2) {
             float loopX = startX + tileSize * tetromino[i];
             float loopY = startY + tileSize * tetromino[i + 1];
 //            renderer.box(loopX, loopY, 0, tileSize, tileSize, 0);
-            batch.draw(helperSelectTexture(piece.getColor()), loopX, loopY, tileSize, tileSize);
+            if (isGhost) {
+                batch.setColor(1, 1, 1, 0.4f);
+            }
+            batch.draw(helperSelectTexture(piece.getColor(), isGhost), loopX, loopY, tileSize, tileSize);
+            if (isGhost) {
+                batch.setColor(Color.WHITE);
+            }
         }
     }
 
@@ -460,6 +516,11 @@ public class TetrisScreen implements Screen {
             helperSoundRandomWhoosh().play();
         }
         gravityTimer = 0;
+        hardDropTimer = 0;
+        placedCount++;
+        if (placedCount % placedCountForLevelup == 0) {
+            level++;
+        }
         holdAvailable = true;
 
         helperGrabUpcoming();
@@ -476,6 +537,8 @@ public class TetrisScreen implements Screen {
             helperGrabUpcoming();
         } else {
             currPiece = new Tetromino(board, heldPiece.getShape());
+            ghostPiece = new Tetromino(board, currPiece.getShape());
+            helperPositionGhostPiece(ghostPiece);
         }
         heldPiece = helperPositionForDisplay(new Tetromino(heldPieceContainer, saveShape));
         return false;
@@ -484,10 +547,22 @@ public class TetrisScreen implements Screen {
     /** Helper to take a tetromino from the top of the upcoming pieces list */
     private void helperGrabUpcoming() {
         currPiece = new Tetromino(board, upcomingPieces[0].getShape());
+        ghostPiece = new Tetromino(board, currPiece.getShape());
+        helperPositionGhostPiece(ghostPiece);
         for (int i = 0; i < upcomingPieces.length - 1; i++) {
             upcomingPieces[i] = upcomingPieces[i + 1];
         }
         upcomingPieces[upcomingPieces.length - 1] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
+    }
+
+    /**
+     * Helper - reset the ghost piece to the position/rotation of the curr piece,
+     * then drop until it lands
+     */
+    private void helperPositionGhostPiece(Tetromino ghost) {
+        ghost.teleportTo(currPiece);
+        while (!ghost.fall()) {
+        }
     }
 
     /** Helper to rotate and position display pieces for aesthetics only */
@@ -527,6 +602,7 @@ public class TetrisScreen implements Screen {
         isGamePaused = true;
         pausedText.setText("Paused.");
         pausedText.setVisible(true);
+        resume.setVisible(true);
         restart.setVisible(true);
         backToTitle.setVisible(true);
     }
@@ -536,6 +612,7 @@ public class TetrisScreen implements Screen {
             return;
         isGamePaused = false;
         pausedText.setVisible(false);
+        resume.setVisible(false);
         restart.setVisible(false);
         backToTitle.setVisible(false);
     }
@@ -545,6 +622,7 @@ public class TetrisScreen implements Screen {
         isLost = true;
         pausedText.setText("Game Over!");
         pausedText.setVisible(true);
+        resume.setVisible(true);
         restart.setVisible(true);
         backToTitle.setVisible(true);
     }

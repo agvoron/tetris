@@ -213,6 +213,18 @@ public class Tetromino {
         return false;
     }
 
+    /**
+     * Teleport & rotate this tetromino to match another one. Specifically for use
+     * with the ghost piece
+     */
+    public void teleportTo(Tetromino target) {
+        if (target.shape != shape)
+            throw new IllegalArgumentException("Teleport target tetromino must have the same shape.");
+        rootX = target.rootX;
+        rootY = target.rootY;
+        rotation = target.rotation;
+    }
+
     private boolean testForHit() {
         for (int i = 0; i < tetromino.length; i += 2) {
             int x = tetromino[i];
