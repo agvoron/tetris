@@ -48,6 +48,7 @@ public class TetrisScreen implements Screen {
     private FPSLogger fps;
 
     private Table infoTable;
+    private Label levelText;
     private Label scoreText;
     private Label pausedText;
     private TextButton resume;
@@ -167,10 +168,12 @@ public class TetrisScreen implements Screen {
 //        infoTable.debugAll();
         stage.addActor(infoTable);
 
+        levelText = new Label("Level: 1", Tetris.ui_skin);
         scoreText = new Label("Score: 0", Tetris.ui_skin);
         pausedText = new Label("Paused.", Tetris.ui_skin);
         pausedText.setVisible(false);
-        infoTable.add(scoreText).padLeft(5);
+        infoTable.add(levelText).padLeft(5);
+        infoTable.add(scoreText).padLeft(15);
         infoTable.add(pausedText).padLeft(15);
 
         resume = new TextButton("Resume", Tetris.ui_skin);
@@ -211,7 +214,7 @@ public class TetrisScreen implements Screen {
         levelScalar = 1.2f;
         level = 1;
         placedCount = 0;
-        placedCountForLevelup = 50;
+        placedCountForLevelup = 20;
         Score.reset();
         softDropActive = false;
         holdAvailable = true;
@@ -383,6 +386,7 @@ public class TetrisScreen implements Screen {
             }
 
             scoreText.setText("Score: " + Score.getScore());
+            levelText.setText("Level: " + level);
         }
 
         fps.log();
@@ -514,11 +518,8 @@ public class TetrisScreen implements Screen {
         gravityTimer = 0;
         hardDropTimer = 0;
         placedCount++;
-        Gdx.app.log("Tetris", "Placed: " + placedCount);
         if (placedCount % placedCountForLevelup == 0) {
             level++;
-            // TODO delete test print statement
-            Gdx.app.log("Tetris", "Level up! Prev level's scalar now: " + Math.pow(levelScalar, level - 1));
         }
         holdAvailable = true;
 
