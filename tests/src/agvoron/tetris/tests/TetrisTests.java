@@ -10,6 +10,8 @@ import org.junit.Test;
 import agvoron.tetris.game.Board;
 import agvoron.tetris.game.Score;
 import agvoron.tetris.game.Tetromino;
+import agvoron.tetris.game.Tetromino.Rotation;
+import agvoron.tetris.game.Tetromino.Shape;
 import agvoron.tetris.ui.TetrisScreen;
 
 public class TetrisTests {
@@ -19,12 +21,7 @@ public class TetrisTests {
     }
 
     @Test
-    public void testDemoJUnit() {
-        assertTrue(true);
-    }
-
-    @Test
-    public void testDemoTetrisCore() {
+    public void testScore() {
         assertEquals(Score.getScore(), 0);
         Score.addScore(100);
         assertEquals(Score.getScore(), 100);
@@ -39,24 +36,46 @@ public class TetrisTests {
     }
 
     @Test
-    public void testDemoLibgdxFeatures() {
+    public void testTetrominoFields() {
         Tetromino test = new Tetromino(new Board());
         assertEquals(test.getShape().getColor(), test.getColor());
     }
+    
+    @Test
+    public void testTetrominoRotation() {
+        Tetromino test = new Tetromino(new Board(), Shape.I);
+        test.setRotation(Rotation.N);
+        int[] tetromino = test.getTetromino();
+        int y = tetromino[1];
+        for (int i=1; i<tetromino.length; i += 2) {
+            assertEquals(y, tetromino[i]);
+        }
+        test.rotateLeft();
+        tetromino = test.getTetromino();
+        int x = tetromino[0];
+        for (int i=0; i<tetromino.length; i += 2) {
+            assertEquals(x, tetromino[i]);
+        }
+        test.rotateFlip();
+        tetromino = test.getTetromino();
+        for (int i=0; i<tetromino.length; i += 2) {
+            assertEquals(x, tetromino[i]);
+        }
+    }
 
     @Test
-    public void testDemoMockTetrisFeatures() {
+    public void testExampleMock() {
         TetrisScreen mockTetrisScreen = mock(TetrisScreen.class);
-
         mockTetrisScreen.render(10);
         assertNotNull(mockTetrisScreen.toString());
-
         verify(mockTetrisScreen).render(10);
     }
 
     @Test
-    public void testDemoMockGLFeatures() {
+    public void testExampleMockGLFeatures() {
         // TODO replicate from the github repo I bookmarked
+        // https://github.com/TomGrill/gdx-testing/tree/master/tests/src/de/tomgrill/gdxtesting
+        assertTrue(true);
     }
 
 }
