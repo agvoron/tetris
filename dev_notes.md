@@ -26,8 +26,8 @@ Patch Notes format
 * Bugfixes
 
 Release process
-* Create feature branch
-* Run test suite
-* Bundle distributable
-* Verify changelog list
-* Playtest
+1. Create feature branch
+2. Run test suite
+3. Bundle distributable
+4. Verify changelog list
+5. Playtest
