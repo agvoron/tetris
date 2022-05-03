@@ -606,6 +606,7 @@ public class TetrisScreen implements Screen {
         isLost = true;
         pausedText.setText("Game Over!");
         pausedText.setVisible(true);
+        resume.setVisible(false);
         restart.setVisible(true);
         backToTitle.setVisible(true);
     }
