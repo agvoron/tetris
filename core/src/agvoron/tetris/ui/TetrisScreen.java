@@ -364,8 +364,8 @@ public class TetrisScreen implements Screen {
         if (!isGamePaused) {
             gravityTimer += (softDropActive ? delta * 4 : delta);
             hardDropTimer += delta;
-            if (gravityTimer > gravity) {
-                gravityTimer = 0;
+            while (gravityTimer > gravity) {
+                gravityTimer -= gravity;
                 if (currPiece.fall()) {
                     helperPlacePiece();
                 }
