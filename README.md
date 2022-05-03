@@ -22,11 +22,11 @@ I'd like to learn a bit more LibGDX as I go.
         * Leveling up/difficulty
     * ~Settings are persisted~
     * Looks nice
-* Tetris Screen
+* ~Tetris Screen~
     * ~Restart button~
     * ~Return to title button~
     * ~View pause menu when paused~
-    * Looks nice
+    * ~Looks nice~
 * Game graphics/UI
     * ~See the tetris board~
     * ~See pieces as they fall~

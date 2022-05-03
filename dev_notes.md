@@ -1,6 +1,18 @@
-# === Tasks ===
+# === 1.1 ===
+* Level up and increase gravity
+
+# === 1.2 ===
 * Finish gameplay
-    * Level up and increase gravity
+    * Keys repeat if held
+    * Rotations
+    * QOL
+
+# === 1.3 ===
+* Settings screen - configurables and tidy up
+
+# === 1.4 ===
+* Snazzy particle visuals
+* Sound effects
 
 # === Implementation Notes ===
 
