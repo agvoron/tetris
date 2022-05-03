@@ -50,6 +50,7 @@ public class TetrisScreen implements Screen {
     private Table infoTable;
     private Label scoreText;
     private Label pausedText;
+    private TextButton resume;
     private TextButton restart;
     private TextButton backToTitle;
 
@@ -166,12 +167,15 @@ public class TetrisScreen implements Screen {
         pausedText = new Label("Paused.", Tetris.ui_skin);
         pausedText.setVisible(false);
         infoTable.add(scoreText).padLeft(5);
-        infoTable.add(pausedText).padLeft(5);
+        infoTable.add(pausedText).padLeft(15);
 
+        resume = new TextButton("Resume", Tetris.ui_skin);
         restart = new TextButton("Restart", Tetris.ui_skin);
         backToTitle = new TextButton("Back to Title", Tetris.ui_skin);
+        resume.setVisible(false);
         restart.setVisible(false);
         backToTitle.setVisible(false);
+        infoTable.add(resume).padLeft(5);
         infoTable.add(restart).padLeft(5);
         infoTable.add(backToTitle).padLeft(5);
 
@@ -279,6 +283,14 @@ public class TetrisScreen implements Screen {
      * Set up listeners for pause menubuttons
      */
     private void setupButtonHandlers() {
+        resume.addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                helperResumeGame();
+            }
+        });
+
         restart.addListener(new ChangeListener() {
 
             @Override
@@ -574,6 +586,7 @@ public class TetrisScreen implements Screen {
         isGamePaused = true;
         pausedText.setText("Paused.");
         pausedText.setVisible(true);
+        resume.setVisible(true);
         restart.setVisible(true);
         backToTitle.setVisible(true);
     }
@@ -583,6 +596,7 @@ public class TetrisScreen implements Screen {
             return;
         isGamePaused = false;
         pausedText.setVisible(false);
+        resume.setVisible(false);
         restart.setVisible(false);
         backToTitle.setVisible(false);
     }

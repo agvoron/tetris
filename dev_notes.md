@@ -1,10 +1,6 @@
 # === Tasks ===
-* Bug/tweak: add back button to pause menu & clean up pause menu
-
 * Finish gameplay
     * Level up and increase gravity
-
-* Sign the executable
 
 # === Implementation Notes ===
 
