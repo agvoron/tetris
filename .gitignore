@@ -5,6 +5,8 @@
 *.ico
 *.json
 *.exe
+/tests/bin/
+/tests/build/
 
 ## Java
 
