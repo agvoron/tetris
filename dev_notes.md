@@ -1,6 +1,3 @@
-# === 1.1 ===
-* Level up and increase gravity
-
 # === 1.2 ===
 * Finish gameplay
     * Keys repeat if held
