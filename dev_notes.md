@@ -14,6 +14,9 @@
 * Snazzy particle visuals
 * Sound effects
 
+# === Issues ===
+* Dragging the window freezes the game
+
 # === Implementation Notes ===
 
 Git Branching

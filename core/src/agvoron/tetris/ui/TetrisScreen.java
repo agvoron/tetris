@@ -86,6 +86,7 @@ public class TetrisScreen implements Screen {
     private float levelScalar;
     private int level;
     private int placedCount;
+    private int placedCountForLevelup;
     private boolean softDropActive;
     private boolean holdAvailable;
     private boolean isGamePaused;
@@ -210,6 +211,7 @@ public class TetrisScreen implements Screen {
         levelScalar = 1.2f;
         level = 1;
         placedCount = 0;
+        placedCountForLevelup = 50;
         Score.reset();
         softDropActive = false;
         holdAvailable = true;
@@ -512,11 +514,11 @@ public class TetrisScreen implements Screen {
         gravityTimer = 0;
         hardDropTimer = 0;
         placedCount++;
-        if (placedCount % 10 == 0) {
-            // TODO delete test print statement
-            Gdx.app.log("Tetris", "Level up! Prev level's scalar was: " + Math.pow(levelScalar, level - 1)
-                    + " new scalar is: " + Math.pow(levelScalar, level));
+        Gdx.app.log("Tetris", "Placed: " + placedCount);
+        if (placedCount % placedCountForLevelup == 0) {
             level++;
+            // TODO delete test print statement
+            Gdx.app.log("Tetris", "Level up! Prev level's scalar now: " + Math.pow(levelScalar, level - 1));
         }
         holdAvailable = true;
 
