@@ -20,6 +20,7 @@ public class TitleScreen implements Screen {
     private Label loading;
     private TextButton play;
     private TextButton settings;
+    private TextButton quit;
 
     private boolean isLoading;
 
@@ -61,6 +62,18 @@ public class TitleScreen implements Screen {
         });
         table.add(settings);
         settings.setDisabled(true);
+
+        table.row();
+
+        quit = new TextButton("Quit", Tetris.ui_skin);
+        quit.addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+            }
+        });
+        table.add(quit);
 
         table.setSkin(Tetris.ui_skin);
         table.setFillParent(true);
