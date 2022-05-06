@@ -411,6 +411,13 @@ public class TetrisScreen implements Screen {
             return;
         }
         // process held keys (event handers handle key up/down)
+        if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[2]))
+                && Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[3]))) {
+            // both keys pressed... prevent the back & forth
+            translateRightRepeatTimer = 0;
+            translateLeftRepeatTimer = 0;
+            return;
+        }
         if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[2]))) {
             translateRightRepeatTimer += delta;
             while (translateRightRepeatTimer > translateRepeatDelay) {
