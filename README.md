@@ -54,7 +54,7 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Level up and increase gravity~
     * ~Topping out and losing~
     * ~Hold a piece~
-    * Keys repeat if held
+    * ~Keys repeat if held~
     * Rotations will move the piece aside if needed
     * Moving can delay landing (e.g. for T-spin)
         * Special clears

@@ -1,6 +1,5 @@
 # === 1.2 ===
 * Finish gameplay
-    * Keys repeat if held
     * Rotations
     * QOL
 
