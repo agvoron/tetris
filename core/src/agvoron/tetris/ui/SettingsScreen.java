@@ -35,6 +35,7 @@ public class SettingsScreen implements Screen {
         table.row();
 
         // TODO would be nice to list the keys in fixed order instead of saved order
+        // validation ^ of the input file
         for (final Entry<String, Integer> entry : Tetris.settings.keys.entrySet()) {
             Label keyName = new Label(entry.getKey(), Tetris.ui_skin);
             table.add(keyName);
