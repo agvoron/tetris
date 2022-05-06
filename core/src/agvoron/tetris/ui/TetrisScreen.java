@@ -371,10 +371,17 @@ public class TetrisScreen implements Screen {
         stage.act();
         stage.draw();
 
-        // game loop update
+        gameLoopUpdate(delta);
+
+        fps.log();
+    }
+
+    private void gameLoopUpdate(float delta) {
         if (!isGamePaused) {
+            gameLoopKeyboardUpdate();
             gravityTimer += (softDropActive ? delta * 4 : delta) * Math.pow(levelScalar, level - 1);
             hardDropTimer += delta;
+
             while (gravityTimer > gravity) {
                 gravityTimer -= gravity;
                 if (currPiece.fall()) {
@@ -388,8 +395,19 @@ public class TetrisScreen implements Screen {
             scoreText.setText("Score: " + Score.getScore());
             levelText.setText("Level: " + level);
         }
+    }
 
-        fps.log();
+    private void gameLoopKeyboardUpdate() {
+        if (isLost || isGamePaused) {
+            return;
+        }
+        // process held keys (event handers handle key up/down)
+        if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[2]))) {
+            // TODO repeat translate right & update ghost piece if timer long enough
+        }
+        if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[3]))) {
+            // TODO left
+        }
     }
 
     private Texture helperSelectTexture(Color color, boolean isGhost) {
