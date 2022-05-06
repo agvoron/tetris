@@ -5,6 +5,7 @@
     * QOL
 
 # === 1.3 ===
+* Issue: if gravity = 0, infinite loop
 * Settings screen - configurables and tidy up
 
 # === 1.4 ===

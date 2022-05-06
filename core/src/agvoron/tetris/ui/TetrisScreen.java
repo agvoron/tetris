@@ -475,7 +475,7 @@ public class TetrisScreen implements Screen {
 
     @Override
     public void pause() {
-
+        helperPauseGame();
     }
 
     @Override

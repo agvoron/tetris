@@ -60,7 +60,7 @@ I'd like to learn a bit more LibGDX as I go.
         * Special clears
     * ~Pause the game~
     * R to restart feature
-    * Pause on focus loss
+    * ~Pause on focus loss~
 * Sound effects
     * Play music
     * ~Place~
