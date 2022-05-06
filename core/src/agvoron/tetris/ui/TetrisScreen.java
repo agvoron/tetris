@@ -91,6 +91,8 @@ public class TetrisScreen implements Screen {
     private float translateRepeatDelay;
     private float translateRightRepeatTimer;
     private float translateLeftRepeatTimer;
+    private float movementBeforePlaceDelay;
+    private float lastMovedTimer;
     private boolean softDropActive;
     private boolean holdAvailable;
     private boolean isGamePaused;
@@ -218,6 +220,8 @@ public class TetrisScreen implements Screen {
         translateRepeatDelay = 0.12f;
         translateRightRepeatTimer = 0f;
         translateLeftRepeatTimer = 0f;
+        movementBeforePlaceDelay = 0.2f;
+        lastMovedTimer = 0f;
         levelScalar = 1.2f;
         level = 1;
         placedCount = 0;
@@ -266,23 +270,33 @@ public class TetrisScreen implements Screen {
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[1])) {
                     softDropActive = true;
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[2])) {
-                    currPiece.translateRight();
+                    if (!currPiece.translateRight()) {
+                        lastMovedTimer = 0f;
+                    }
                     helperPositionGhostPiece(ghostPiece);
                     translateRightRepeatTimer = 0f;
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[3])) {
-                    currPiece.translateLeft();
+                    if (!currPiece.translateLeft()) {
+                        lastMovedTimer = 0f;
+                    }
                     helperPositionGhostPiece(ghostPiece);
                     translateLeftRepeatTimer = 0f;
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[4])) {
-                    currPiece.rotateRight();
+                    if (!currPiece.rotateRight()) {
+                        lastMovedTimer = 0f;
+                    }
                     helperPositionGhostPiece(ghostPiece);
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[5])) {
-                    currPiece.rotateLeft();
+                    if (!currPiece.rotateLeft()) {
+                        lastMovedTimer = 0f;
+                    }
                     helperPositionGhostPiece(ghostPiece);
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[6])) {
                     helperHoldPiece();
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[7])) {
-                    currPiece.rotateFlip();
+                    if (!currPiece.rotateFlip()) {
+                        lastMovedTimer = 0f;
+                    }
                     helperPositionGhostPiece(ghostPiece);
                 }
                 return super.keyDown(event, keycode);
@@ -390,14 +404,19 @@ public class TetrisScreen implements Screen {
             gameLoopKeyboardUpdate(delta);
             gravityTimer += (softDropActive ? delta * 4 : delta) * Math.pow(levelScalar, level - 1);
             hardDropTimer += delta;
+            lastMovedTimer += delta;
 
             while (gravityTimer > gravity) {
                 gravityTimer -= gravity;
-                if (currPiece.fall()) {
-                    helperPlacePiece();
-                }
-                if (softDropActive) {
-                    Score.trickleSoftDrop();
+                if (!currPiece.fall()) {
+                    if (softDropActive) {
+                        Score.trickleSoftDrop();
+                    }
+                } else {
+                    if (lastMovedTimer > movementBeforePlaceDelay) {
+                        helperPlacePiece();
+                        lastMovedTimer = 0f;
+                    }
                 }
             }
 
@@ -421,7 +440,9 @@ public class TetrisScreen implements Screen {
         if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[2]))) {
             translateRightRepeatTimer += delta;
             while (translateRightRepeatTimer > translateRepeatDelay) {
-                currPiece.translateRight();
+                if (!currPiece.translateRight()) {
+                    lastMovedTimer = 0f;
+                }
                 helperPositionGhostPiece(ghostPiece);
                 translateRightRepeatTimer -= translateRepeatDelay;
             }
@@ -429,7 +450,9 @@ public class TetrisScreen implements Screen {
         if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[3]))) {
             translateLeftRepeatTimer += delta;
             while (translateLeftRepeatTimer > translateRepeatDelay) {
-                currPiece.translateLeft();
+                if (!currPiece.translateLeft()) {
+                    lastMovedTimer = 0f;
+                }
                 helperPositionGhostPiece(ghostPiece);
                 translateLeftRepeatTimer -= translateRepeatDelay;
             }
