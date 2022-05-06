@@ -88,6 +88,9 @@ public class TetrisScreen implements Screen {
     private int level;
     private int placedCount;
     private int placedCountForLevelup;
+    private float translateRepeatDelay;
+    private float translateRightRepeatTimer;
+    private float translateLeftRepeatTimer;
     private boolean softDropActive;
     private boolean holdAvailable;
     private boolean isGamePaused;
@@ -207,10 +210,14 @@ public class TetrisScreen implements Screen {
             upcomingPieces[i] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
         }
 
+        // TODO pull out tweakables/configurables from this jumble
         gravity = 0.5f;
         gravityTimer = -1f;
-        hardDropRepeatDelay = 0.12f;
+        hardDropRepeatDelay = 0.16f;
         hardDropTimer = 0f;
+        translateRepeatDelay = 0.12f;
+        translateRightRepeatTimer = 0f;
+        translateLeftRepeatTimer = 0f;
         levelScalar = 1.2f;
         level = 1;
         placedCount = 0;
@@ -261,9 +268,11 @@ public class TetrisScreen implements Screen {
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[2])) {
                     currPiece.translateRight();
                     helperPositionGhostPiece(ghostPiece);
+                    translateRightRepeatTimer = 0f;
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[3])) {
                     currPiece.translateLeft();
                     helperPositionGhostPiece(ghostPiece);
+                    translateLeftRepeatTimer = 0f;
                 } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[4])) {
                     currPiece.rotateRight();
                     helperPositionGhostPiece(ghostPiece);
@@ -378,7 +387,7 @@ public class TetrisScreen implements Screen {
 
     private void gameLoopUpdate(float delta) {
         if (!isGamePaused) {
-            gameLoopKeyboardUpdate();
+            gameLoopKeyboardUpdate(delta);
             gravityTimer += (softDropActive ? delta * 4 : delta) * Math.pow(levelScalar, level - 1);
             hardDropTimer += delta;
 
@@ -397,16 +406,26 @@ public class TetrisScreen implements Screen {
         }
     }
 
-    private void gameLoopKeyboardUpdate() {
+    private void gameLoopKeyboardUpdate(float delta) {
         if (isLost || isGamePaused) {
             return;
         }
         // process held keys (event handers handle key up/down)
         if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[2]))) {
-            // TODO repeat translate right & update ghost piece if timer long enough
+            translateRightRepeatTimer += delta;
+            while (translateRightRepeatTimer > translateRepeatDelay) {
+                currPiece.translateRight();
+                helperPositionGhostPiece(ghostPiece);
+                translateRightRepeatTimer -= translateRepeatDelay;
+            }
         }
         if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[3]))) {
-            // TODO left
+            translateLeftRepeatTimer += delta;
+            while (translateLeftRepeatTimer > translateRepeatDelay) {
+                currPiece.translateLeft();
+                helperPositionGhostPiece(ghostPiece);
+                translateLeftRepeatTimer -= translateRepeatDelay;
+            }
         }
     }
 
