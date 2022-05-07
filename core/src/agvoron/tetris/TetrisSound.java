@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 public class TetrisSound {
 
-    public static Sound helperSoundRandomThunk() {
+    public static Sound randomThunk() {
         switch (MathUtils.random(2)) {
             case 0:
                 return Tetris.app.manager.get("thunk1.mp3", Sound.class);
@@ -18,7 +18,7 @@ public class TetrisSound {
         }
     }
 
-    public static Sound helperSoundRandomWhoosh() {
+    public static Sound randomWhoosh() {
         switch (MathUtils.random(2)) {
             case 0:
                 return Tetris.app.manager.get("whoosh1.mp3", Sound.class);

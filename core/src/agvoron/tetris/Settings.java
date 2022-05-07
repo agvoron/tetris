@@ -8,6 +8,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 
 public class Settings {
+    
+    public static final int SIDE_PANEL_WIDTH = 5;
+    public static final int PANEL_PIECE_HEIGHT = 3;
+    public static final int NUMBER_UPCOMING_SHOWN = 4;
 
     public static final String[] KEY_NAMES = { "Hard Drop", "Soft Drop", "Right", "Left", "Spin CW", "Spin CCW", "Hold",
             "Flip", "Pause" };
