@@ -55,10 +55,12 @@ public class TetrisScreen implements Screen {
     private TextButton restart;
     private TextButton backToTitle;
 
+    // TODO should be in Controller
     private Board board;
     private Board heldPieceContainer;
     private Board upcomingPiecesContainer;
 
+    // TODO should be in Controller
     private Tetromino currPiece;
     private Tetromino heldPiece;
     private Tetromino[] upcomingPieces;
@@ -80,6 +82,7 @@ public class TetrisScreen implements Screen {
     private float upcomingContainerEndX;
     private float upcomingContainerEndY;
 
+    // TODO should be in Controller
     private float gravity;
     private float gravityTimer;
     private float hardDropRepeatDelay;
@@ -198,6 +201,7 @@ public class TetrisScreen implements Screen {
     /**
      * Initial game state variables
      */
+    // TODO should be in Controller
     private void setupInitGameState() {
         board = new Board();
         heldPieceContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT);
@@ -236,6 +240,7 @@ public class TetrisScreen implements Screen {
     /**
      * Setup input handlers for keys
      */
+    // TODO keys should call Controller methods
     private void setupKeyControls() {
         stage.addListener(new InputListener() {
             @Override
@@ -399,6 +404,7 @@ public class TetrisScreen implements Screen {
         fps.log();
     }
 
+    // TODO should be in Controller
     private void gameLoopUpdate(float delta) {
         if (!isGamePaused) {
             gameLoopKeyboardUpdate(delta);
@@ -425,6 +431,7 @@ public class TetrisScreen implements Screen {
         }
     }
 
+    // TODO should be in Controller
     private void gameLoopKeyboardUpdate(float delta) {
         if (isLost || isGamePaused) {
             return;
@@ -565,6 +572,7 @@ public class TetrisScreen implements Screen {
      * final location of currPiece, check for top-out, and reset state for a new
      * tetromino if all is well
      */
+    // TODO should be in Controller
     private void helperPlacePiece() {
         helperSoundRandomThunk().play();
 
@@ -594,6 +602,7 @@ public class TetrisScreen implements Screen {
     }
 
     /** Send the current piece to the held piece side panel */
+    // TODO should be in Controller
     private boolean helperHoldPiece() {
         if (!holdAvailable) {
             return true;
@@ -612,6 +621,7 @@ public class TetrisScreen implements Screen {
     }
 
     /** Helper to take a tetromino from the top of the upcoming pieces list */
+    // TODO should be in Controller
     private void helperGrabUpcoming() {
         currPiece = new Tetromino(board, upcomingPieces[0].getShape());
         ghostPiece = new Tetromino(board, currPiece.getShape());
@@ -626,6 +636,7 @@ public class TetrisScreen implements Screen {
      * Helper - reset the ghost piece to the position/rotation of the curr piece,
      * then drop until it lands
      */
+    // TODO should be in Controller
     private void helperPositionGhostPiece(Tetromino ghost) {
         ghost.teleportTo(currPiece);
         while (!ghost.fall()) {
@@ -633,6 +644,7 @@ public class TetrisScreen implements Screen {
     }
 
     /** Helper to rotate and position display pieces for aesthetics only */
+    // TODO should be in Controller
     private Tetromino helperPositionForDisplay(Tetromino piece) {
         switch (piece.getShape()) {
             case I:
@@ -694,11 +706,13 @@ public class TetrisScreen implements Screen {
         backToTitle.setVisible(true);
     }
 
+    // TODO should be in Controller
     private void helperResetGame() {
         setupInitGameState();
         helperResumeGame();
     }
 
+    // TODO should be in a separate sound manager
     private Sound helperSoundRandomThunk() {
         switch (MathUtils.random(2)) {
             case 0:
@@ -712,6 +726,7 @@ public class TetrisScreen implements Screen {
         }
     }
 
+    // TODO should be in a separate sound manager
     private Sound helperSoundRandomWhoosh() {
         switch (MathUtils.random(2)) {
             case 0:
