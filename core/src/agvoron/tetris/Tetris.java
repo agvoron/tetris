@@ -45,6 +45,7 @@ public class Tetris extends Game {
         manager.load("purple.png", Texture.class);
         manager.load("red.png", Texture.class);
         manager.load("yellow.png", Texture.class);
+
         manager.load("thunk1.mp3", Sound.class);
         manager.load("thunk2.mp3", Sound.class);
         manager.load("thunk3.mp3", Sound.class);
