@@ -301,18 +301,23 @@ public class TetrisController {
             }
         }
     }
-    
+
     /**
-     * Smarter version of tetromino translate method, will try a few different ways to move the curr piece before giving up
+     * Smarter version of tetromino translate method, will try a few different ways
+     * to move the curr piece before giving up
+     * 
      * @param false = left, true = right
-     * @return true if the attempt to find a valid spot to move to failed */
+     * @return true if the attempt to find a valid spot to move to failed
+     */
     private boolean smartTranslate(boolean leftOrRight) {
         // try just translating first
-        if (!(leftOrRight ? currPiece.translateRight() : currPiece.translateLeft())) return false;
+        if (!(leftOrRight ? currPiece.translateRight() : currPiece.translateLeft()))
+            return false;
         // try bumping one tile up or down
         if (!currPiece.translateUp()) {
             // successful bump up
-            if (!(leftOrRight ? currPiece.translateRight() : currPiece.translateLeft())) return false;
+            if (!(leftOrRight ? currPiece.translateRight() : currPiece.translateLeft()))
+                return false;
         }
         // couldn't fit there
         currPiece.fall();
@@ -321,9 +326,12 @@ public class TetrisController {
     }
 
     /**
-     * Smarter version of tetromino rotate, will try a few different ways to move the curr piece before giving up 
+     * Smarter version of tetromino rotate, will try a few different ways to move
+     * the curr piece before giving up
+     * 
      * @param false = left, true = right
-     * @return true if the attempt to find a valid spot to move to failed */
+     * @return true if the attempt to find a valid spot to move to failed
+     */
     private boolean smartRotate(boolean leftOrRight) {
         if (leftOrRight) {
             return currPiece.rotateRight();
@@ -334,8 +342,11 @@ public class TetrisController {
     }
 
     /**
-     * Smarter version of tetromino flip, will try a few different ways to move the curr piece before giving up 
-     * @return true if the attempt to find a valid spot to move to failed */
+     * Smarter version of tetromino flip, will try a few different ways to move the
+     * curr piece before giving up
+     * 
+     * @return true if the attempt to find a valid spot to move to failed
+     */
     private boolean smartRotateFlip() {
         return currPiece.rotateFlip();
     }
