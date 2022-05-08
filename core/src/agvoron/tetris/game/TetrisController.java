@@ -307,14 +307,19 @@ public class TetrisController {
      * @param false = left, true = right
      * @return true if the attempt to find a valid spot to move to failed */
     private boolean smartTranslate(boolean leftOrRight) {
-        if (leftOrRight) {
-            return currPiece.translateRight();
-        } else {
-            return currPiece.translateLeft();
+        // try just translating first
+        if (!(leftOrRight ? currPiece.translateRight() : currPiece.translateLeft())) return false;
+        // try bumping one tile up or down
+        if (!currPiece.translateUp()) {
+            // successful bump up
+            if (!(leftOrRight ? currPiece.translateRight() : currPiece.translateLeft())) return false;
         }
-
+        // couldn't fit there
+        currPiece.fall();
+        // give up
+        return true;
     }
-    
+
     /**
      * Smarter version of tetromino rotate, will try a few different ways to move the curr piece before giving up 
      * @param false = left, true = right
