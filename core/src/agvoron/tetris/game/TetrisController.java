@@ -55,6 +55,7 @@ public class TetrisController {
     private float translateLeftRepeatTimer;
     private float movementBeforePlaceDelay;
     private float lastMovedTimer;
+    private boolean isLanded;
     private float landedMaxPlaceDelay;
     private float landedTimer;
     private boolean softDropActive;
@@ -149,6 +150,7 @@ public class TetrisController {
         lastMovedTimer = 0f;
         landedMaxPlaceDelay = 2.0f;
         landedTimer = 0f;
+        isLanded = false;
         levelScalar = 1.2f;
         level = 1;
         placedCount = 0;
@@ -232,28 +234,34 @@ public class TetrisController {
     }
 
     public void gameLoopUpdate(float delta) {
-        if (!isGamePaused) {
-            gameLoopKeyboardUpdate(delta);
-            gravityTimer += (softDropActive ? delta * 4 : delta) * Math.pow(levelScalar, level - 1);
-            hardDropTimer += delta;
-            lastMovedTimer += delta;
-
-            // TODO issues: rethink this & make sure I understand
-            // lastMovedTimer shouldn't be in the loop (only allows it to check during a timed drop)
-            while (gravityTimer > gravity) {
-                gravityTimer -= gravity;
-                if (!currPiece.fall()) {
-                    if (softDropActive) {
-                        Score.trickleSoftDrop();
-                    }
-                } else {
-                    if (lastMovedTimer > movementBeforePlaceDelay) {
-                        placePiece();
-                    }
-                }
-            }
-
+        if (isGamePaused) {
+            return;
         }
+        gameLoopKeyboardUpdate(delta);
+        gravityTimer += (softDropActive ? delta * 4 : delta) * Math.pow(levelScalar, level - 1);
+        hardDropTimer += delta;
+        lastMovedTimer += delta;
+
+        while (gravityTimer > gravity) {
+            gravityTimer -= gravity;
+            if (!currPiece.fall()) {
+                isLanded = false;
+                landedTimer = 0f;
+                if (softDropActive) {
+                    Score.trickleSoftDrop();
+                }
+            } else {
+                isLanded = true;
+            }
+        }
+
+        if (isLanded) {
+            landedTimer += delta;
+            if (lastMovedTimer > movementBeforePlaceDelay || landedTimer > landedMaxPlaceDelay) {
+                placePiece();
+            }
+        }
+
     }
 
     private void gameLoopKeyboardUpdate(float delta) {
@@ -321,6 +329,7 @@ public class TetrisController {
             level++;
         }
         holdAvailable = true;
+        isLanded = false;
 
         grabUpcoming();
     }
