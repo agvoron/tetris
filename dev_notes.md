@@ -1,15 +1,5 @@
-# === 1.2 ===
-* Finish gameplay
-    * Rotations
-    * QOL
-
 # === 1.3 ===
 * Issue: if gravity = 0, infinite loop
-* Settings screen - configurables and tidy up
-
-# === 1.4 ===
-* Snazzy particle visuals
-* Sound effects
 
 # === Implementation Notes ===
 
