@@ -8,7 +8,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 
 public class Settings {
-    
+
+    // TODO make configurable/find better place for these constants
     public static final int SIDE_PANEL_WIDTH = 5;
     public static final int PANEL_PIECE_HEIGHT = 3;
     public static final int NUMBER_UPCOMING_SHOWN = 4;
