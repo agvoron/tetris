@@ -252,6 +252,34 @@ public class Tetromino {
         return false;
     }
 
+    /**
+     * Will try bumping one tile left/right, then flipping
+     * 
+     * @return true if cannot make the rotation work
+     */
+    public boolean rotateFlipBump() {
+        // try left first
+        rootX -= 1;
+        rotation = rotation.left();
+        rotation = rotation.left();
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // try right
+        rootX += 2;
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // give up and undo
+        rootX -= 1;
+        rotation = rotation.right();
+        rotation = rotation.right();
+        refreshCoordinates();
+        return true;
+    }
+
     /** @return true if the translation would go out-of-bounds */
     public boolean fall() {
         rootY -= 1;
