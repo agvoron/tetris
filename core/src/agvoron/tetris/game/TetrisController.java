@@ -55,6 +55,8 @@ public class TetrisController {
     private float translateLeftRepeatTimer;
     private float movementBeforePlaceDelay;
     private float lastMovedTimer;
+    private float landedMaxPlaceDelay;
+    private float landedTimer;
     private boolean softDropActive;
     private boolean holdAvailable;
     private boolean isGamePaused;
@@ -145,6 +147,8 @@ public class TetrisController {
         translateLeftRepeatTimer = 0f;
         movementBeforePlaceDelay = 0.4f;
         lastMovedTimer = 0f;
+        landedMaxPlaceDelay = 2.0f;
+        landedTimer = 0f;
         levelScalar = 1.2f;
         level = 1;
         placedCount = 0;
@@ -188,6 +192,7 @@ public class TetrisController {
             Score.hardDrop(fallDistance);
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[1])) {
             softDropActive = true;
+            lastMovedTimer = 0f;
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[2])) {
             if (!currPiece.translateRight()) {
                 lastMovedTimer = 0f;
@@ -233,6 +238,8 @@ public class TetrisController {
             hardDropTimer += delta;
             lastMovedTimer += delta;
 
+            // TODO issues: rethink this & make sure I understand
+            // lastMovedTimer shouldn't be in the loop (only allows it to check during a timed drop)
             while (gravityTimer > gravity) {
                 gravityTimer -= gravity;
                 if (!currPiece.fall()) {
@@ -242,7 +249,6 @@ public class TetrisController {
                 } else {
                     if (lastMovedTimer > movementBeforePlaceDelay) {
                         placePiece();
-                        lastMovedTimer = 0f;
                     }
                 }
             }
@@ -309,6 +315,7 @@ public class TetrisController {
         }
         gravityTimer = 0;
         hardDropTimer = 0;
+        lastMovedTimer = 0f;
         placedCount++;
         if (placedCount % placedCountForLevelup == 0) {
             level++;
