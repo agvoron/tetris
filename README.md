@@ -56,7 +56,7 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Hold a piece~
     * ~Keys repeat if held~
     * Rotations will move the piece aside if needed
-    * Moving can delay landing (e.g. for T-spin)
+    * ~Moving can delay landing (e.g. for T-spin)~
         * Special clears
     * ~Pause the game~
     * R to restart feature

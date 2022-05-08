@@ -200,31 +200,31 @@ public class TetrisController {
             softDropActive = true;
             lastMovedTimer = 0f;
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[2])) {
-            if (!currPiece.translateRight()) {
+            if (!smartTranslateRight()) {
                 lastMovedTimer = 0f;
             }
             positionGhostPiece(ghostPiece);
             translateRightRepeatTimer = 0f;
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[3])) {
-            if (!currPiece.translateLeft()) {
+            if (!smartTranslateLeft()) {
                 lastMovedTimer = 0f;
             }
             positionGhostPiece(ghostPiece);
             translateLeftRepeatTimer = 0f;
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[4])) {
-            if (!currPiece.rotateRight()) {
+            if (!smartRotateRight()) {
                 lastMovedTimer = 0f;
             }
             positionGhostPiece(ghostPiece);
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[5])) {
-            if (!currPiece.rotateLeft()) {
+            if (!smartRotateLeft()) {
                 lastMovedTimer = 0f;
             }
             positionGhostPiece(ghostPiece);
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[6])) {
             holdPiece();
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[7])) {
-            if (!currPiece.rotateFlip()) {
+            if (!smartRotateFlip()) {
                 lastMovedTimer = 0f;
             }
             positionGhostPiece(ghostPiece);
@@ -283,7 +283,7 @@ public class TetrisController {
         if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[2]))) {
             translateRightRepeatTimer += delta;
             while (translateRightRepeatTimer > translateRepeatDelay) {
-                if (!currPiece.translateRight()) {
+                if (!smartTranslateRight()) {
                     lastMovedTimer = 0f;
                 }
                 positionGhostPiece(ghostPiece);
@@ -293,13 +293,48 @@ public class TetrisController {
         if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[3]))) {
             translateLeftRepeatTimer += delta;
             while (translateLeftRepeatTimer > translateRepeatDelay) {
-                if (!currPiece.translateLeft()) {
+                if (!smartTranslateLeft()) {
                     lastMovedTimer = 0f;
                 }
                 positionGhostPiece(ghostPiece);
                 translateLeftRepeatTimer -= translateRepeatDelay;
             }
         }
+    }
+    
+    /**
+     * Smarter version of tetromino translate method, will try a few different ways to move the curr piece before giving up 
+     * @return true if the attempt to find a valid spot to move to failed */
+    private boolean smartTranslateLeft() {
+        return currPiece.translateLeft();
+    }
+    
+    /**
+     * Smarter version of tetromino translate method, will try a few different ways to move the curr piece before giving up 
+     * @return true if the attempt to find a valid spot to move to failed */
+    private boolean smartTranslateRight() {
+        return currPiece.translateRight();
+    }
+    
+    /**
+     * Smarter version of tetromino rotate, will try a few different ways to move the curr piece before giving up 
+     * @return true if the attempt to find a valid spot to move to failed */
+    private boolean smartRotateLeft() {
+        return currPiece.rotateLeft();
+    }
+    
+    /**
+     * Smarter version of tetromino rotate, will try a few different ways to move the curr piece before giving up 
+     * @return true if the attempt to find a valid spot to move to failed */
+    private boolean smartRotateRight() {
+        return currPiece.rotateRight();
+    }
+    
+    /**
+     * Smarter version of tetromino flip, will try a few different ways to move the curr piece before giving up 
+     * @return true if the attempt to find a valid spot to move to failed */
+    private boolean smartRotateFlip() {
+        return currPiece.rotateFlip();
     }
 
     /**
