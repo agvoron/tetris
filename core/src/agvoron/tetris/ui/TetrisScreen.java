@@ -2,7 +2,6 @@ package agvoron.tetris.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL30;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -27,19 +25,14 @@ import agvoron.tetris.Settings;
 import agvoron.tetris.Tetris;
 import agvoron.tetris.game.Board;
 import agvoron.tetris.game.Score;
-import agvoron.tetris.game.Square;
+import agvoron.tetris.game.TetrisController;
 import agvoron.tetris.game.Tetromino;
-import agvoron.tetris.game.Tetromino.Rotation;
-import agvoron.tetris.game.Tetromino.Shape;
 
 public class TetrisScreen implements Screen {
 
     private static final float HOR_BOARD_PAD = 50;
     private static final float VER_BOARD_PAD = 50;
     private static final float SIDE_PANEL_PAD = 25;
-    private static final int SIDE_PANEL_WIDTH = 5;
-    private static final int PANEL_PIECE_HEIGHT = 3;
-    private static final int NUMBER_UPCOMING_SHOWN = 4;
 
     private Stage stage;
     private OrthographicCamera stageCam;
@@ -54,15 +47,6 @@ public class TetrisScreen implements Screen {
     private TextButton resume;
     private TextButton restart;
     private TextButton backToTitle;
-
-    private Board board;
-    private Board heldPieceContainer;
-    private Board upcomingPiecesContainer;
-
-    private Tetromino currPiece;
-    private Tetromino heldPiece;
-    private Tetromino[] upcomingPieces;
-    private Tetromino ghostPiece;
 
     private float tileSize;
     private float boardStartX;
@@ -80,24 +64,6 @@ public class TetrisScreen implements Screen {
     private float upcomingContainerEndX;
     private float upcomingContainerEndY;
 
-    private float gravity;
-    private float gravityTimer;
-    private float hardDropRepeatDelay;
-    private float hardDropTimer;
-    private float levelScalar;
-    private int level;
-    private int placedCount;
-    private int placedCountForLevelup;
-    private float translateRepeatDelay;
-    private float translateRightRepeatTimer;
-    private float translateLeftRepeatTimer;
-    private float movementBeforePlaceDelay;
-    private float lastMovedTimer;
-    private boolean softDropActive;
-    private boolean holdAvailable;
-    private boolean isGamePaused;
-    private boolean isLost;
-
     private Texture background;
     private Texture black;
     private Texture blue;
@@ -107,6 +73,8 @@ public class TetrisScreen implements Screen {
     private Texture purple;
     private Texture red;
     private Texture yellow;
+
+    private TetrisController ctrlr;
 
     public TetrisScreen() {
         stage = new Stage(new ScreenViewport());
@@ -127,24 +95,26 @@ public class TetrisScreen implements Screen {
         red = Tetris.app.manager.get("red.png", Texture.class);
         yellow = Tetris.app.manager.get("yellow.png", Texture.class);
 
-        setupInitGameState();
+        ctrlr = new TetrisController(this);
 
-        float tileSizeW = (Gdx.graphics.getWidth() - (2 * HOR_BOARD_PAD)) / (board.getWidth() + (2 * SIDE_PANEL_WIDTH));
-        float tileSizeH = Math.min((Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / board.getHeight(),
-                (Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / (PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN));
+        float tileSizeW = (Gdx.graphics.getWidth() - (2 * HOR_BOARD_PAD))
+                / (ctrlr.getBoard().getWidth() + (2 * Settings.SIDE_PANEL_WIDTH));
+        float tileSizeH = Math.min((Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD)) / ctrlr.getBoard().getHeight(),
+                (Gdx.graphics.getHeight() - (2 * VER_BOARD_PAD))
+                        / (Settings.PANEL_PIECE_HEIGHT * Settings.NUMBER_UPCOMING_SHOWN));
         tileSize = Math.min(tileSizeW, tileSizeH);
 
         if (tileSize == tileSizeW) {
             // constrained by width
             boardStartX = HOR_BOARD_PAD;
             boardEndX = Gdx.graphics.getWidth() - HOR_BOARD_PAD;
-            boardStartY = (Gdx.graphics.getHeight() / 2) - (board.getHeight() / 2 * tileSize);
-            boardEndY = (Gdx.graphics.getHeight() / 2) + (board.getHeight() / 2 * tileSize);
+            boardStartY = (Gdx.graphics.getHeight() / 2) - (ctrlr.getBoard().getHeight() / 2 * tileSize);
+            boardEndY = (Gdx.graphics.getHeight() / 2) + (ctrlr.getBoard().getHeight() / 2 * tileSize);
 
         } else {
             // constrained by height
-            boardStartX = (Gdx.graphics.getWidth() / 2) - (board.getWidth() / 2 * tileSize);
-            boardEndX = (Gdx.graphics.getWidth() / 2) + (board.getWidth() / 2 * tileSize);
+            boardStartX = (Gdx.graphics.getWidth() / 2) - (ctrlr.getBoard().getWidth() / 2 * tileSize);
+            boardEndX = (Gdx.graphics.getWidth() / 2) + (ctrlr.getBoard().getWidth() / 2 * tileSize);
             boardStartY = VER_BOARD_PAD;
             boardEndY = Gdx.graphics.getHeight() - VER_BOARD_PAD;
         }
@@ -154,14 +124,14 @@ public class TetrisScreen implements Screen {
             sidePanelPad = tileSize;
         }
 
-        heldContainerStartX = boardStartX - (tileSize * SIDE_PANEL_WIDTH) - sidePanelPad;
-        heldContainerStartY = boardEndY - (tileSize * PANEL_PIECE_HEIGHT);
+        heldContainerStartX = boardStartX - (tileSize * Settings.SIDE_PANEL_WIDTH) - sidePanelPad;
+        heldContainerStartY = boardEndY - (tileSize * Settings.PANEL_PIECE_HEIGHT);
         heldContainerEndX = boardStartX - sidePanelPad;
         heldContainerEndY = boardEndY;
 
         upcomingContainerStartX = boardEndX + sidePanelPad;
-        upcomingContainerStartY = boardEndY - (tileSize * PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN);
-        upcomingContainerEndX = boardEndX + (tileSize * SIDE_PANEL_WIDTH) + sidePanelPad;
+        upcomingContainerStartY = boardEndY - (tileSize * Settings.PANEL_PIECE_HEIGHT * Settings.NUMBER_UPCOMING_SHOWN);
+        upcomingContainerEndX = boardEndX + (tileSize * Settings.SIDE_PANEL_WIDTH) + sidePanelPad;
         upcomingContainerEndY = boardEndY;
 
         infoTable = new Table();
@@ -196,117 +166,19 @@ public class TetrisScreen implements Screen {
     }
 
     /**
-     * Initial game state variables
-     */
-    private void setupInitGameState() {
-        board = new Board();
-        heldPieceContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT);
-        upcomingPiecesContainer = new Board(SIDE_PANEL_WIDTH, PANEL_PIECE_HEIGHT * NUMBER_UPCOMING_SHOWN);
-
-        currPiece = new Tetromino(board);
-        ghostPiece = new Tetromino(board, currPiece.getShape());
-        helperPositionGhostPiece(ghostPiece);
-        heldPiece = null;
-        upcomingPieces = new Tetromino[NUMBER_UPCOMING_SHOWN];
-        for (int i = 0; i < NUMBER_UPCOMING_SHOWN; i++) {
-            upcomingPieces[i] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
-        }
-
-        // TODO pull out tweakables/configurables from this jumble
-        gravity = 0.5f;
-        gravityTimer = -1f;
-        hardDropRepeatDelay = 0.16f;
-        hardDropTimer = 0f;
-        translateRepeatDelay = 0.12f;
-        translateRightRepeatTimer = 0f;
-        translateLeftRepeatTimer = 0f;
-        movementBeforePlaceDelay = 0.2f;
-        lastMovedTimer = 0f;
-        levelScalar = 1.2f;
-        level = 1;
-        placedCount = 0;
-        placedCountForLevelup = 20;
-        Score.reset();
-        softDropActive = false;
-        holdAvailable = true;
-        isGamePaused = false;
-        isLost = false;
-    }
-
-    /**
      * Setup input handlers for keys
      */
     private void setupKeyControls() {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (isLost) {
-                    return super.keyDown(event, keycode);
-                }
-
-                if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[8])) {
-                    if (isGamePaused) {
-                        helperResumeGame();
-                    } else {
-                        helperPauseGame();
-                    }
-                }
-
-                if (isGamePaused) {
-                    return super.keyDown(event, keycode);
-                }
-
-                if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[0])) {
-                    if (hardDropTimer < hardDropRepeatDelay) {
-                        // too soon after placing - stop accidental hard drop
-                        return super.keyDown(event, keycode);
-                    }
-                    int fallDistance = 0;
-                    while (!currPiece.fall()) {
-                        fallDistance++;
-                    }
-                    helperPlacePiece();
-                    Score.hardDrop(fallDistance);
-                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[1])) {
-                    softDropActive = true;
-                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[2])) {
-                    if (!currPiece.translateRight()) {
-                        lastMovedTimer = 0f;
-                    }
-                    helperPositionGhostPiece(ghostPiece);
-                    translateRightRepeatTimer = 0f;
-                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[3])) {
-                    if (!currPiece.translateLeft()) {
-                        lastMovedTimer = 0f;
-                    }
-                    helperPositionGhostPiece(ghostPiece);
-                    translateLeftRepeatTimer = 0f;
-                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[4])) {
-                    if (!currPiece.rotateRight()) {
-                        lastMovedTimer = 0f;
-                    }
-                    helperPositionGhostPiece(ghostPiece);
-                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[5])) {
-                    if (!currPiece.rotateLeft()) {
-                        lastMovedTimer = 0f;
-                    }
-                    helperPositionGhostPiece(ghostPiece);
-                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[6])) {
-                    helperHoldPiece();
-                } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[7])) {
-                    if (!currPiece.rotateFlip()) {
-                        lastMovedTimer = 0f;
-                    }
-                    helperPositionGhostPiece(ghostPiece);
-                }
+                ctrlr.handleKeyDown(keycode);
                 return super.keyDown(event, keycode);
             }
 
             @Override
             public boolean keyUp(InputEvent event, int keycode) {
-                if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[1])) {
-                    softDropActive = false;
-                }
+                ctrlr.handleKeyUp(keycode);
                 return super.keyUp(event, keycode);
             }
 
@@ -321,7 +193,8 @@ public class TetrisScreen implements Screen {
 
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                helperResumeGame();
+                ctrlr.unpauseGame();
+                resumeGameUI();
             }
         });
 
@@ -329,7 +202,8 @@ public class TetrisScreen implements Screen {
 
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                helperResetGame();
+                ctrlr.resetGame();
+                resumeGameUI();
             }
         });
 
@@ -337,7 +211,8 @@ public class TetrisScreen implements Screen {
 
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                helperResetGame();
+                ctrlr.resetGame();
+                resumeGameUI();
                 Tetris.app.openTitle();
             }
         });
@@ -358,22 +233,22 @@ public class TetrisScreen implements Screen {
         batch.begin();
 
         // draw background textures for board, held piece, upcoming pieces
-        helperRenderBoard(board, boardStartX, boardStartY);
-        helperRenderBoard(heldPieceContainer, heldContainerStartX, heldContainerStartY);
-        helperRenderBoard(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY);
+        helperRenderBoard(ctrlr.getBoard(), boardStartX, boardStartY);
+        helperRenderBoard(ctrlr.getHeldPieceBoard(), heldContainerStartX, heldContainerStartY);
+        helperRenderBoard(ctrlr.getUpcomingPieceBoard(), upcomingContainerStartX, upcomingContainerStartY);
 
         // draw ghost piece tetromino
-        helperRenderTetromino(ghostPiece, boardStartX, boardStartY, true);
+        helperRenderTetromino(ctrlr.getGhostPiece(), boardStartX, boardStartY, true);
 
         // draw tetromino textures for each
-        helperRenderTetromino(currPiece, boardStartX, boardStartY, false);
-        if (heldPiece != null) {
-            helperRenderTetromino(heldPiece, heldContainerStartX, heldContainerStartY - (PANEL_PIECE_HEIGHT * tileSize),
-                    false);
+        helperRenderTetromino(ctrlr.getCurrPiece(), boardStartX, boardStartY, false);
+        if (ctrlr.getHeldPiece() != null) {
+            helperRenderTetromino(ctrlr.getHeldPiece(), heldContainerStartX,
+                    heldContainerStartY - (Settings.PANEL_PIECE_HEIGHT * tileSize), false);
         }
-        for (int i = 0; i < upcomingPieces.length; i++) {
-            helperRenderTetromino(upcomingPieces[i], upcomingContainerStartX,
-                    upcomingContainerStartY - (PANEL_PIECE_HEIGHT * tileSize * (i + 1)), false);
+        for (int i = 0; i < ctrlr.getUpcomingPieces().length; i++) {
+            helperRenderTetromino(ctrlr.getUpcomingPieces()[i], upcomingContainerStartX,
+                    upcomingContainerStartY - (Settings.PANEL_PIECE_HEIGHT * tileSize * (i + 1)), false);
         }
 
         batch.end();
@@ -382,81 +257,24 @@ public class TetrisScreen implements Screen {
         renderer.setProjectionMatrix(stageCam.combined);
         renderer.begin(ShapeType.Filled);
 
-        helperRenderBoardLines(board, boardStartX, boardStartY, boardEndX, boardEndY);
-        helperRenderBoardLines(heldPieceContainer, heldContainerStartX, heldContainerStartY, heldContainerEndX,
+        helperRenderBoardLines(ctrlr.getBoard(), boardStartX, boardStartY, boardEndX, boardEndY);
+        helperRenderBoardLines(ctrlr.getHeldPieceBoard(), heldContainerStartX, heldContainerStartY, heldContainerEndX,
                 heldContainerEndY);
-        helperRenderBoardLines(upcomingPiecesContainer, upcomingContainerStartX, upcomingContainerStartY,
+        helperRenderBoardLines(ctrlr.getUpcomingPieceBoard(), upcomingContainerStartX, upcomingContainerStartY,
                 upcomingContainerEndX, upcomingContainerEndY);
 
         renderer.end();
 
         // draw UI
+        scoreText.setText("Score: " + Score.getScore());
+        levelText.setText("Level: " + ctrlr.getLevel());
+
         stage.act();
         stage.draw();
 
-        gameLoopUpdate(delta);
+        ctrlr.gameLoopUpdate(delta);
 
         fps.log();
-    }
-
-    private void gameLoopUpdate(float delta) {
-        if (!isGamePaused) {
-            gameLoopKeyboardUpdate(delta);
-            gravityTimer += (softDropActive ? delta * 4 : delta) * Math.pow(levelScalar, level - 1);
-            hardDropTimer += delta;
-            lastMovedTimer += delta;
-
-            while (gravityTimer > gravity) {
-                gravityTimer -= gravity;
-                if (!currPiece.fall()) {
-                    if (softDropActive) {
-                        Score.trickleSoftDrop();
-                    }
-                } else {
-                    if (lastMovedTimer > movementBeforePlaceDelay) {
-                        helperPlacePiece();
-                        lastMovedTimer = 0f;
-                    }
-                }
-            }
-
-            scoreText.setText("Score: " + Score.getScore());
-            levelText.setText("Level: " + level);
-        }
-    }
-
-    private void gameLoopKeyboardUpdate(float delta) {
-        if (isLost || isGamePaused) {
-            return;
-        }
-        // process held keys (event handers handle key up/down)
-        if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[2]))
-                && Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[3]))) {
-            // both keys pressed... prevent the back & forth
-            translateRightRepeatTimer = 0;
-            translateLeftRepeatTimer = 0;
-            return;
-        }
-        if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[2]))) {
-            translateRightRepeatTimer += delta;
-            while (translateRightRepeatTimer > translateRepeatDelay) {
-                if (!currPiece.translateRight()) {
-                    lastMovedTimer = 0f;
-                }
-                helperPositionGhostPiece(ghostPiece);
-                translateRightRepeatTimer -= translateRepeatDelay;
-            }
-        }
-        if (Gdx.input.isKeyPressed(Tetris.settings.keys.get(Settings.KEY_NAMES[3]))) {
-            translateLeftRepeatTimer += delta;
-            while (translateLeftRepeatTimer > translateRepeatDelay) {
-                if (!currPiece.translateLeft()) {
-                    lastMovedTimer = 0f;
-                }
-                helperPositionGhostPiece(ghostPiece);
-                translateLeftRepeatTimer -= translateRepeatDelay;
-            }
-        }
     }
 
     private Texture helperSelectTexture(Color color, boolean isGhost) {
@@ -542,7 +360,8 @@ public class TetrisScreen implements Screen {
 
     @Override
     public void pause() {
-        helperPauseGame();
+        ctrlr.pauseGame();
+        pauseGameUI();
     }
 
     @Override
@@ -560,113 +379,7 @@ public class TetrisScreen implements Screen {
         stage.dispose();
     }
 
-    /**
-     * Run this after currPiece.fall() returns true, to update the board with the
-     * final location of currPiece, check for top-out, and reset state for a new
-     * tetromino if all is well
-     */
-    private void helperPlacePiece() {
-        helperSoundRandomThunk().play();
-
-        int[] tetromino = currPiece.getTetromino();
-        for (int i = 0; i < tetromino.length; i += 2) {
-            if (tetromino[i + 1] >= board.getHeight()) {
-                // topped out
-                helperEndGame();
-                return;
-            }
-            Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
-            editSquare.color = currPiece.getColor();
-            editSquare.occupied = true;
-        }
-        if (board.clearLines() > 0) {
-            helperSoundRandomWhoosh().play();
-        }
-        gravityTimer = 0;
-        hardDropTimer = 0;
-        placedCount++;
-        if (placedCount % placedCountForLevelup == 0) {
-            level++;
-        }
-        holdAvailable = true;
-
-        helperGrabUpcoming();
-    }
-
-    /** Send the current piece to the held piece side panel */
-    private boolean helperHoldPiece() {
-        if (!holdAvailable) {
-            return true;
-        }
-        holdAvailable = false;
-        Shape saveShape = currPiece.getShape();
-        if (heldPiece == null) {
-            helperGrabUpcoming();
-        } else {
-            currPiece = new Tetromino(board, heldPiece.getShape());
-            ghostPiece = new Tetromino(board, currPiece.getShape());
-            helperPositionGhostPiece(ghostPiece);
-        }
-        heldPiece = helperPositionForDisplay(new Tetromino(heldPieceContainer, saveShape));
-        return false;
-    }
-
-    /** Helper to take a tetromino from the top of the upcoming pieces list */
-    private void helperGrabUpcoming() {
-        currPiece = new Tetromino(board, upcomingPieces[0].getShape());
-        ghostPiece = new Tetromino(board, currPiece.getShape());
-        helperPositionGhostPiece(ghostPiece);
-        for (int i = 0; i < upcomingPieces.length - 1; i++) {
-            upcomingPieces[i] = upcomingPieces[i + 1];
-        }
-        upcomingPieces[upcomingPieces.length - 1] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
-    }
-
-    /**
-     * Helper - reset the ghost piece to the position/rotation of the curr piece,
-     * then drop until it lands
-     */
-    private void helperPositionGhostPiece(Tetromino ghost) {
-        ghost.teleportTo(currPiece);
-        while (!ghost.fall()) {
-        }
-    }
-
-    /** Helper to rotate and position display pieces for aesthetics only */
-    private Tetromino helperPositionForDisplay(Tetromino piece) {
-        switch (piece.getShape()) {
-            case I:
-                piece.setRotation(Rotation.N);
-                piece.translateUp();
-                break;
-            case J:
-                piece.setRotation(Rotation.E);
-                piece.fall();
-                break;
-            case L:
-                piece.setRotation(Rotation.W);
-                piece.fall();
-                piece.translateRight();
-                break;
-            case O:
-                piece.setRotation(Rotation.N);
-                break;
-            case S:
-                piece.setRotation(Rotation.E);
-                break;
-            case T:
-                piece.setRotation(Rotation.E);
-                piece.translateRight();
-                break;
-            case Z:
-                piece.setRotation(Rotation.E);
-                break;
-        }
-        return piece;
-    }
-
-    private void helperPauseGame() {
-        isGamePaused = true;
+    public void pauseGameUI() {
         pausedText.setText("Paused.");
         pausedText.setVisible(true);
         resume.setVisible(true);
@@ -674,55 +387,19 @@ public class TetrisScreen implements Screen {
         backToTitle.setVisible(true);
     }
 
-    private void helperResumeGame() {
-        if (isLost)
-            return;
-        isGamePaused = false;
+    public void resumeGameUI() {
         pausedText.setVisible(false);
         resume.setVisible(false);
         restart.setVisible(false);
         backToTitle.setVisible(false);
     }
 
-    private void helperEndGame() {
-        isGamePaused = true;
-        isLost = true;
+    public void endGameUI() {
         pausedText.setText("Game Over!");
         pausedText.setVisible(true);
         resume.setVisible(true);
         restart.setVisible(true);
         backToTitle.setVisible(true);
-    }
-
-    private void helperResetGame() {
-        setupInitGameState();
-        helperResumeGame();
-    }
-
-    private Sound helperSoundRandomThunk() {
-        switch (MathUtils.random(2)) {
-            case 0:
-                return Tetris.app.manager.get("thunk1.mp3", Sound.class);
-            case 1:
-                return Tetris.app.manager.get("thunk2.mp3", Sound.class);
-            case 2:
-                return Tetris.app.manager.get("thunk3.mp3", Sound.class);
-            default:
-                return null;
-        }
-    }
-
-    private Sound helperSoundRandomWhoosh() {
-        switch (MathUtils.random(2)) {
-            case 0:
-                return Tetris.app.manager.get("whoosh1.mp3", Sound.class);
-            case 1:
-                return Tetris.app.manager.get("whoosh2.mp3", Sound.class);
-            case 2:
-                return Tetris.app.manager.get("whoosh3.mp3", Sound.class);
-            default:
-                return null;
-        }
     }
 
 }
