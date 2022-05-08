@@ -212,6 +212,7 @@ public class TetrisScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ctrlr.resetGame();
+                resumeGameUI();
                 Tetris.app.openTitle();
             }
         });
