@@ -171,8 +171,12 @@ public class TetrisController {
             // TODO weird junction between controller/screen - these methods have to call
             // back to it
             if (isGamePaused) {
+                if (isLost)
+                    return;
+                isGamePaused = false;
                 view.resumeGameUI();
             } else {
+                isGamePaused = true;
                 view.pauseGameUI();
             }
         }
@@ -311,6 +315,8 @@ public class TetrisController {
             if (tetromino[i + 1] >= board.getHeight()) {
                 // topped out
                 // TODO another weird junction between controller/screen
+                isGamePaused = true;
+                isLost = true;
                 view.endGameUI();
                 return;
             }
