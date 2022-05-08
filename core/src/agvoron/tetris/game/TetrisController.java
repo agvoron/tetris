@@ -128,11 +128,11 @@ public class TetrisController {
 
         currPiece = new Tetromino(board);
         ghostPiece = new Tetromino(board, currPiece.getShape());
-        helperPositionGhostPiece(ghostPiece);
+        positionGhostPiece(ghostPiece);
         heldPiece = null;
         upcomingPieces = new Tetromino[Settings.NUMBER_UPCOMING_SHOWN];
         for (int i = 0; i < Settings.NUMBER_UPCOMING_SHOWN; i++) {
-            upcomingPieces[i] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
+            upcomingPieces[i] = positionForDisplay(new Tetromino(upcomingPiecesContainer));
         }
 
         // TODO pull out tweakables/configurables from this jumble
@@ -165,9 +165,9 @@ public class TetrisController {
             // TODO weird junction between controller/screen - these methods have to call
             // back to it
             if (isGamePaused) {
-                view.helperResumeGame();
+                view.resumeGameUI();
             } else {
-                view.helperPauseGame();
+                view.pauseGameUI();
             }
         }
 
@@ -184,7 +184,7 @@ public class TetrisController {
             while (!currPiece.fall()) {
                 fallDistance++;
             }
-            helperPlacePiece();
+            placePiece();
             Score.hardDrop(fallDistance);
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[1])) {
             softDropActive = true;
@@ -192,31 +192,31 @@ public class TetrisController {
             if (!currPiece.translateRight()) {
                 lastMovedTimer = 0f;
             }
-            helperPositionGhostPiece(ghostPiece);
+            positionGhostPiece(ghostPiece);
             translateRightRepeatTimer = 0f;
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[3])) {
             if (!currPiece.translateLeft()) {
                 lastMovedTimer = 0f;
             }
-            helperPositionGhostPiece(ghostPiece);
+            positionGhostPiece(ghostPiece);
             translateLeftRepeatTimer = 0f;
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[4])) {
             if (!currPiece.rotateRight()) {
                 lastMovedTimer = 0f;
             }
-            helperPositionGhostPiece(ghostPiece);
+            positionGhostPiece(ghostPiece);
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[5])) {
             if (!currPiece.rotateLeft()) {
                 lastMovedTimer = 0f;
             }
-            helperPositionGhostPiece(ghostPiece);
+            positionGhostPiece(ghostPiece);
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[6])) {
-            helperHoldPiece();
+            holdPiece();
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[7])) {
             if (!currPiece.rotateFlip()) {
                 lastMovedTimer = 0f;
             }
-            helperPositionGhostPiece(ghostPiece);
+            positionGhostPiece(ghostPiece);
         }
     }
 
@@ -241,7 +241,7 @@ public class TetrisController {
                     }
                 } else {
                     if (lastMovedTimer > movementBeforePlaceDelay) {
-                        helperPlacePiece();
+                        placePiece();
                         lastMovedTimer = 0f;
                     }
                 }
@@ -268,7 +268,7 @@ public class TetrisController {
                 if (!currPiece.translateRight()) {
                     lastMovedTimer = 0f;
                 }
-                helperPositionGhostPiece(ghostPiece);
+                positionGhostPiece(ghostPiece);
                 translateRightRepeatTimer -= translateRepeatDelay;
             }
         }
@@ -278,7 +278,7 @@ public class TetrisController {
                 if (!currPiece.translateLeft()) {
                     lastMovedTimer = 0f;
                 }
-                helperPositionGhostPiece(ghostPiece);
+                positionGhostPiece(ghostPiece);
                 translateLeftRepeatTimer -= translateRepeatDelay;
             }
         }
@@ -289,7 +289,7 @@ public class TetrisController {
      * final location of currPiece, check for top-out, and reset state for a new
      * tetromino if all is well
      */
-    private void helperPlacePiece() {
+    private void placePiece() {
         TetrisSound.randomThunk().play();
 
         int[] tetromino = currPiece.getTetromino();
@@ -297,7 +297,7 @@ public class TetrisController {
             if (tetromino[i + 1] >= board.getHeight()) {
                 // topped out
                 // TODO another weird junction between controller/screen
-                view.helperEndGame();
+                view.endGameUI();
                 return;
             }
             Square editSquare = board.getSquare(tetromino[i], tetromino[i + 1]);
@@ -315,50 +315,50 @@ public class TetrisController {
         }
         holdAvailable = true;
 
-        helperGrabUpcoming();
+        grabUpcoming();
     }
 
     /** Send the current piece to the held piece side panel */
-    private boolean helperHoldPiece() {
+    private boolean holdPiece() {
         if (!holdAvailable) {
             return true;
         }
         holdAvailable = false;
         Shape saveShape = currPiece.getShape();
         if (heldPiece == null) {
-            helperGrabUpcoming();
+            grabUpcoming();
         } else {
             currPiece = new Tetromino(board, heldPiece.getShape());
             ghostPiece = new Tetromino(board, currPiece.getShape());
-            helperPositionGhostPiece(ghostPiece);
+            positionGhostPiece(ghostPiece);
         }
-        heldPiece = helperPositionForDisplay(new Tetromino(heldPieceContainer, saveShape));
+        heldPiece = positionForDisplay(new Tetromino(heldPieceContainer, saveShape));
         return false;
     }
 
     /** Helper to take a tetromino from the top of the upcoming pieces list */
-    private void helperGrabUpcoming() {
+    private void grabUpcoming() {
         currPiece = new Tetromino(board, upcomingPieces[0].getShape());
         ghostPiece = new Tetromino(board, currPiece.getShape());
-        helperPositionGhostPiece(ghostPiece);
+        positionGhostPiece(ghostPiece);
         for (int i = 0; i < upcomingPieces.length - 1; i++) {
             upcomingPieces[i] = upcomingPieces[i + 1];
         }
-        upcomingPieces[upcomingPieces.length - 1] = helperPositionForDisplay(new Tetromino(upcomingPiecesContainer));
+        upcomingPieces[upcomingPieces.length - 1] = positionForDisplay(new Tetromino(upcomingPiecesContainer));
     }
 
     /**
      * Helper - reset the ghost piece to the position/rotation of the curr piece,
      * then drop until it lands
      */
-    private void helperPositionGhostPiece(Tetromino ghost) {
+    private void positionGhostPiece(Tetromino ghost) {
         ghost.teleportTo(currPiece);
         while (!ghost.fall()) {
         }
     }
 
     /** Helper to rotate and position display pieces for aesthetics only */
-    private Tetromino helperPositionForDisplay(Tetromino piece) {
+    private Tetromino positionForDisplay(Tetromino piece) {
         switch (piece.getShape()) {
             case I:
                 piece.setRotation(Rotation.N);

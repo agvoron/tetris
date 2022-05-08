@@ -193,7 +193,7 @@ public class TetrisScreen implements Screen {
 
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                helperResumeGame();
+                resumeGameUI();
             }
         });
 
@@ -202,7 +202,7 @@ public class TetrisScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ctrlr.resetGame();
-                helperResumeGame();
+                resumeGameUI();
             }
         });
 
@@ -358,7 +358,7 @@ public class TetrisScreen implements Screen {
 
     @Override
     public void pause() {
-        helperPauseGame();
+        pauseGameUI();
     }
 
     @Override
@@ -376,7 +376,7 @@ public class TetrisScreen implements Screen {
         stage.dispose();
     }
 
-    public void helperPauseGame() {
+    public void pauseGameUI() {
         ctrlr.pauseGame();
         pausedText.setText("Paused.");
         pausedText.setVisible(true);
@@ -385,7 +385,7 @@ public class TetrisScreen implements Screen {
         backToTitle.setVisible(true);
     }
 
-    public void helperResumeGame() {
+    public void resumeGameUI() {
         if (ctrlr.isGameLost())
             return;
         ctrlr.unpauseGame();
@@ -395,7 +395,7 @@ public class TetrisScreen implements Screen {
         backToTitle.setVisible(false);
     }
 
-    public void helperEndGame() {
+    public void endGameUI() {
         ctrlr.pauseGame();
         ctrlr.loseGame();
         pausedText.setText("Game Over!");
