@@ -16,7 +16,7 @@ Patch Notes format
 * Bugfixes
 
 Release process
-1. Create feature branch
+1. Create release branch
 2. Run test suite
 3. Bundle distributable
 4. Verify changelog list
