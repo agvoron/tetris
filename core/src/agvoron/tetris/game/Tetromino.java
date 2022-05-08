@@ -186,6 +186,58 @@ public class Tetromino {
         return false;
     }
 
+    /**
+     * Will try bumping one tile left/right, then rotating
+     * 
+     * @return true if cannot make the rotation work
+     */
+    public boolean rotateRightBump() {
+        // try left first
+        rootX -= 1;
+        rotation = rotation.right();
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // try right
+        rootX += 2;
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // give up and undo
+        rootX -= 1;
+        rotation = rotation.left();
+        refreshCoordinates();
+        return true;
+    }
+
+    /**
+     * Will try bumping one tile left/right, then rotating
+     * 
+     * @return true if cannot make the rotation work
+     */
+    public boolean rotateLeftBump() {
+        // try left first
+        rootX -= 1;
+        rotation = rotation.left();
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // try right
+        rootX += 2;
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // give up and undo
+        rootX -= 1;
+        rotation = rotation.right();
+        refreshCoordinates();
+        return true;
+    }
+
     /** @return true if the rotation would go out-of-bounds */
     public boolean rotateFlip() {
         rotation = rotation.left();

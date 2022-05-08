@@ -1,5 +1,5 @@
-# === 1.3 ===
 * Issue: if gravity = 0, infinite loop
+    * Will only matter when I make gravity configurable
 
 # === Implementation Notes ===
 

@@ -214,10 +214,16 @@ public class TetrisController {
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[4])) {
             if (!currPiece.rotateRight()) {
                 lastMovedTimer = 0f;
+            } else if (!currPiece.rotateRightBump()) {
+                Gdx.app.log("Tetris", "Bumped!");
+                lastMovedTimer = 0f;
             }
             positionGhostPiece(ghostPiece);
         } else if (keycode == Tetris.settings.keys.get(Settings.KEY_NAMES[5])) {
             if (!currPiece.rotateLeft()) {
+                lastMovedTimer = 0f;
+            } else if (!currPiece.rotateLeftBump()) {
+                Gdx.app.log("Tetris", "Bumped!");
                 lastMovedTimer = 0f;
             }
             positionGhostPiece(ghostPiece);
