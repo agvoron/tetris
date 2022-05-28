@@ -49,8 +49,33 @@ task dist(type: Jar) {
     destinationDirectory = file("$buildDir/lib")
 }
 
+task proguard(type: proguard.gradle.ProGuardTask) {
+    group = 'tetris custom'
+    
+    outputs.upToDateWhen { false }
+    configuration 'config.pro'
+    
+    if (System.getProperty('java.version').startsWith('1.')) {
+		libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+	} else {
+		libraryjars "${System.getProperty('java.home')}/jmods/java.base.jmod", jarfilter: '!**.jar', filter: '!module-info.class'
+	}
+
+	// TODO why "[1.0.0]" happens so I need to [0] it?
+    injars  "build/lib/desktop-${allprojects.version[0]}.jar"
+    outjars "build/lib/${appName}-${allprojects.version[0]}.jar"
+
+    // Can use to deobfuscate stack traces
+    //printmapping 'build/lib/out.map'
+    //renamesourcefileattribute 'SourceFile'
+    //keepattributes 'SourceFile,LineNumberTable'
+    // OR do "-keepattributes Signature,InnerClasses,SourceFile,LineNumberTable" in config.pro
+}
+
+proguard.dependsOn dist
+
 // jpackage guide
-jpackageImage.dependsOn dist
+jpackageImage.dependsOn proguard
 
 dist.dependsOn classes
 
@@ -71,11 +96,17 @@ runtime {
 
     jpackage {
         jpackageHome = 'C:/Program Files/Eclipse Adoptium/jdk-17.0.2.8-hotspot'
-        mainJar = dist.archiveFileName.get()
+        //mainJar = dist.archiveFileName.get()
+        mainJar = "${appName}-${allprojects.version[0]}.jar"
         
         imageOptions = ["--icon", file("../assets/icon.ico")] // only for windows
     }
 
+}
+
+// remove the unoptimized jar
+jpackageImage.doLast {
+    file("build/jpackage/desktop/app/desktop-${allprojects.version[0]}.jar").delete()
 }
 
 // customizing further
