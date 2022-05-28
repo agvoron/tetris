@@ -18,6 +18,9 @@ Patch Notes format
 Release process
 1. Create release branch
 2. Run test suite
-3. Bundle distributable
+3. Bundle release distributable
 4. Verify changelog list
 5. Playtest
+6. Fix on release branch
+7. Merge into dev and master
+8. Bundle distributable from master & publish
