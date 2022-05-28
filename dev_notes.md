@@ -1,15 +1,5 @@
-# === 1.2 ===
-* Finish gameplay
-    * Keys repeat if held
-    * Rotations
-    * QOL
-
-# === 1.3 ===
-* Settings screen - configurables and tidy up
-
-# === 1.4 ===
-* Snazzy particle visuals
-* Sound effects
+* Issue: if gravity = 0, infinite loop
+    * Will only matter when I make gravity configurable
 
 # === Implementation Notes ===
 
@@ -24,3 +14,10 @@ Patch Notes format
 * Features
 * Enhancements
 * Bugfixes
+
+Release process
+1. Create release branch
+2. Run test suite
+3. Bundle distributable
+4. Verify changelog list
+5. Playtest

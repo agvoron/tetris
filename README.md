@@ -4,6 +4,9 @@ The objective is to create a complete, semi-polished, playable game app from sta
 With this project, I don't need to design anything, so the creative element is removed and I can focus on implementing stuff.
 I'd like to learn a bit more LibGDX as I go.
 
+05/08/2022: Getting to the point where remaining things on the list are less interesting/don't provide a learning opportunity.
+Gonna wrap a few loose ends up & archive this guy!
+
 ## Goals
 * ~Title Screen~
     * ~Asset loading bar~
@@ -54,13 +57,13 @@ I'd like to learn a bit more LibGDX as I go.
     * ~Level up and increase gravity~
     * ~Topping out and losing~
     * ~Hold a piece~
-    * Keys repeat if held
-    * Rotations will move the piece aside if needed
-    * Moving can delay landing (e.g. for T-spin)
+    * ~Keys repeat if held~
+    * ~Reduced scope: Rotations will move the piece aside if needed~
+    * ~Moving can delay landing (e.g. for T-spin)~
         * Special clears
     * ~Pause the game~
     * R to restart feature
-    * Pause on focus loss
+    * ~Pause on focus loss~
 * Sound effects
     * Play music
     * ~Place~

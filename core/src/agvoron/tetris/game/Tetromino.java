@@ -186,6 +186,58 @@ public class Tetromino {
         return false;
     }
 
+    /**
+     * Will try bumping one tile left/right, then rotating
+     * 
+     * @return true if cannot make the rotation work
+     */
+    public boolean rotateRightBump() {
+        // try left first
+        rootX -= 1;
+        rotation = rotation.right();
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // try right
+        rootX += 2;
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // give up and undo
+        rootX -= 1;
+        rotation = rotation.left();
+        refreshCoordinates();
+        return true;
+    }
+
+    /**
+     * Will try bumping one tile left/right, then rotating
+     * 
+     * @return true if cannot make the rotation work
+     */
+    public boolean rotateLeftBump() {
+        // try left first
+        rootX -= 1;
+        rotation = rotation.left();
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // try right
+        rootX += 2;
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // give up and undo
+        rootX -= 1;
+        rotation = rotation.right();
+        refreshCoordinates();
+        return true;
+    }
+
     /** @return true if the rotation would go out-of-bounds */
     public boolean rotateFlip() {
         rotation = rotation.left();
@@ -198,6 +250,34 @@ public class Tetromino {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Will try bumping one tile left/right, then flipping
+     * 
+     * @return true if cannot make the rotation work
+     */
+    public boolean rotateFlipBump() {
+        // try left first
+        rootX -= 1;
+        rotation = rotation.left();
+        rotation = rotation.left();
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // try right
+        rootX += 2;
+        refreshCoordinates();
+        if (!testForHit()) {
+            return false;
+        }
+        // give up and undo
+        rootX -= 1;
+        rotation = rotation.right();
+        rotation = rotation.right();
+        refreshCoordinates();
+        return true;
     }
 
     /** @return true if the translation would go out-of-bounds */
@@ -223,6 +303,21 @@ public class Tetromino {
         rootX = target.rootX;
         rootY = target.rootY;
         rotation = target.rotation;
+    }
+
+    /**
+     * Identical to fall() but will reset to initial position regardless of whether
+     * the fall is allowed. Test only.
+     * 
+     * @return true if the translation would go out-of-bounds
+     */
+    public boolean testFall() {
+        rootY -= 1;
+        refreshCoordinates();
+        boolean isLanded = testForHit();
+        rootY += 1;
+        refreshCoordinates();
+        return isLanded;
     }
 
     private boolean testForHit() {
