@@ -305,6 +305,21 @@ public class Tetromino {
         rotation = target.rotation;
     }
 
+    /**
+     * Identical to fall() but will reset to initial position regardless of whether
+     * the fall is allowed. Test only.
+     * 
+     * @return true if the translation would go out-of-bounds
+     */
+    public boolean testFall() {
+        rootY -= 1;
+        refreshCoordinates();
+        boolean isLanded = testForHit();
+        rootY += 1;
+        refreshCoordinates();
+        return isLanded;
+    }
+
     private boolean testForHit() {
         for (int i = 0; i < tetromino.length; i += 2) {
             int x = tetromino[i];
