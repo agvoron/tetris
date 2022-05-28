@@ -256,6 +256,7 @@ public class TetrisController {
                 landedTimer = 0f;
                 if (softDropActive) {
                     Score.trickleSoftDrop();
+                    lastMovedTimer = 0f;
                 }
             } else {
                 isLanded = true;
