@@ -55,7 +55,6 @@ public class TetrisController {
     private float translateLeftRepeatTimer;
     private float movementBeforePlaceDelay;
     private float lastMovedTimer;
-    private boolean isLanded;
     private float landedMaxPlaceDelay;
     private float landedTimer;
     private boolean softDropActive;
@@ -150,7 +149,6 @@ public class TetrisController {
         lastMovedTimer = 0f;
         landedMaxPlaceDelay = 2.0f;
         landedTimer = 0f;
-        isLanded = false;
         levelScalar = 1.2f;
         level = 1;
         placedCount = 0;
@@ -252,17 +250,15 @@ public class TetrisController {
         while (gravityTimer > gravity) {
             gravityTimer -= gravity;
             if (!currPiece.fall()) {
-                isLanded = false;
                 landedTimer = 0f;
                 if (softDropActive) {
                     Score.trickleSoftDrop();
+                    lastMovedTimer = 0f;
                 }
-            } else {
-                isLanded = true;
             }
         }
 
-        if (isLanded) {
+        if (currPiece.testFall()) {
             landedTimer += delta;
             if (lastMovedTimer > movementBeforePlaceDelay || landedTimer > landedMaxPlaceDelay) {
                 placePiece();
@@ -338,7 +334,6 @@ public class TetrisController {
             level++;
         }
         holdAvailable = true;
-        isLanded = false;
 
         grabUpcoming();
     }
