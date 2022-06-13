@@ -330,7 +330,9 @@ public class TetrisController {
         }
         gravityTimer = 0;
         hardDropTimer = 0;
-        lastMovedTimer = 0f;
+        lastMovedTimer = 0;
+        landedTimer = 0;
+
         placedCount++;
         if (placedCount % placedCountForLevelup == 0) {
             level++;
