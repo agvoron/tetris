@@ -193,6 +193,8 @@ public class TetrisScreen implements Screen {
 
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                if (ctrlr.isGameLost())
+                    return;
                 ctrlr.unpauseGame();
                 resumeGameUI();
             }

@@ -108,6 +108,8 @@ public class TetrisController {
     }
 
     public void unpauseGame() {
+        if (isLost)
+            return;
         isGamePaused = false;
     }
 
