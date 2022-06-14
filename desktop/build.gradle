@@ -127,7 +127,7 @@ task tetrisBundle(dependsOn: jpackageImage, type: Exec) {
     + ' --set-product-version "' + tetrisVersion + '"'
     + ' --set-version-string "OriginalFilename" "' + tetrisFilename + '.exe"'
     + ' --set-version-string "ProductName" "' + tetrisFilename + '"'
-    + ' --set-version-string "FileDescription" "This is my Tetris demo for learning LibGDX!"'
+    + ' --set-version-string "FileDescription" "' + tetrisFilename + '"'
     + ' --set-version-string "LegalCopyright" "Copyright - Test"'
     + ' --set-version-string "Comments" "This is my Tetris demo for learning LibGDX!"'
     //+ ' --set-icon ../../../../assets/icon.ico'

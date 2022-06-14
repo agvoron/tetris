@@ -42,7 +42,7 @@ public class TetrisController {
     private Tetromino[] upcomingPieces;
     private Tetromino ghostPiece;
 
-    private float gravity;
+    private float gravityDelay;
     private float gravityTimer;
     private float hardDropRepeatDelay;
     private float hardDropTimer;
@@ -108,6 +108,8 @@ public class TetrisController {
     }
 
     public void unpauseGame() {
+        if (isLost)
+            return;
         isGamePaused = false;
     }
 
@@ -138,7 +140,7 @@ public class TetrisController {
         }
 
         // TODO pull out tweakables/configurables from this jumble
-        gravity = 0.5f;
+        gravityDelay = 0.5f;
         gravityTimer = -1f;
         hardDropRepeatDelay = 0.2f;
         hardDropTimer = 0f;
@@ -247,20 +249,30 @@ public class TetrisController {
         hardDropTimer += delta;
         lastMovedTimer += delta;
 
-        while (gravityTimer > gravity) {
-            gravityTimer -= gravity;
+        while (gravityTimer > gravityDelay) {
+            // it's time to fall
+            gravityTimer -= gravityDelay;
             if (!currPiece.fall()) {
+                // piece fell successfully, no need to place
                 landedTimer = 0f;
                 if (softDropActive) {
                     Score.trickleSoftDrop();
                     lastMovedTimer = 0f;
                 }
+            } else if (lastMovedTimer > movementBeforePlaceDelay) {
+                // piece has been on the ground since the last gravity tick
+                // and player has not given an input recently
+                placePiece();
+                return;
             }
+
         }
 
         if (currPiece.testFall()) {
+            // piece is currently landed, but we don't know for how long
             landedTimer += delta;
-            if (lastMovedTimer > movementBeforePlaceDelay || landedTimer > landedMaxPlaceDelay) {
+            if (landedTimer > landedMaxPlaceDelay) {
+                // OK, it's been long enough
                 placePiece();
             }
         }
@@ -328,7 +340,9 @@ public class TetrisController {
         }
         gravityTimer = 0;
         hardDropTimer = 0;
-        lastMovedTimer = 0f;
+        lastMovedTimer = 0;
+        landedTimer = 0;
+
         placedCount++;
         if (placedCount % placedCountForLevelup == 0) {
             level++;

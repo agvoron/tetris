@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -22,6 +23,7 @@ public class TitleScreen implements Screen {
     private TextButton play;
     private TextButton settings;
     private TextButton quit;
+    private Label credits;
 
     private boolean isLoading;
 
@@ -79,12 +81,19 @@ public class TitleScreen implements Screen {
         quit.pad(5);
         table.add(quit);
 
+        table.row();
+
+        credits = new Label("Sound effects obtained from https://www.zapsplat.com", Tetris.ui_skin);
+        credits.setFontScale(0.5f);
+        table.add(credits).expandY().align(Align.bottom);
+
         table.setSkin(Tetris.ui_skin);
         table.setFillParent(true);
         table.center();
         table.top();
         table.pad(70);
-        for (@SuppressWarnings("rawtypes") Cell c : table.getCells()) {
+        for (@SuppressWarnings("rawtypes")
+        Cell c : table.getCells()) {
             c.pad(5);
         }
 //        table.debugAll();
